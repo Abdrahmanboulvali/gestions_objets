@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>Profil</title>
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link href="css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style_table.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='new.css') }}">
+
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Nunito', sans-serif;
+            margin: 0;
+            background: linear-gradient(to bottom, #008080, #40e0d0);
+            color: #333;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -250px;
+            width: 250px;
+            height: 100%;
+            background: #004d4d;
+            color: white;
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            transition: left 0.3s ease;
+            z-index: 1000;
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .sidebar h2 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar ul li {
+            margin: 15px 0;
+        }
+
+        .sidebar ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            display: block;
+            padding: 10px;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+
+        .sidebar ul li a:hover {
+            background: #006666;
+        }
+
+        /* Content Styles */
+        .content {
+            margin-left: 0;
+            padding: 20px;
+            transition: margin-left 0.3s ease;
+        }
+
+        .content.shifted {
+            margin-left: 250px;
+        }
+
+        /* Header Styles */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .menu-btn {
+            font-size: 24px;
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+        }
+
+        /* Search Bar */
+        .search-bar {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .search-bar input {
+            width: 100%;
+            max-width: 600px;
+            padding: 10px;
+            border: none;
+            border-radius: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            font-size: 16px;
+        }
+    </style>
+    <!-- DataTable CSS -->
+<link href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+
+<!-- DataTable JavaScript -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+
+
+    <link rel ="stylesheet" type="text/css"
+      href="{{ url_for('static', filename='Profile.css') }}">
+</head>
+<body>
+<div>
+    <div>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <ul>
+            <li><a class="nav-link" href="{{ url_for('Index') }}">
+                <i class="fas fa-fw fa-home"></i>
+                Page general</a></li>
+            <li>
+                <a href="/update_profil/{{person.0}}"><i class="fas fa-pencil-alt"></i>
+                    Modifier le profil</a></li>
+        </ul>
+
+    </div>
+
+
+        <!-- Header with Hamburger Menu -->
+        <div class="header">
+            <button class="menu-btn" id="menu-btn">&#9776;</button>
+        </div>
+
+    </div>
+    <div>
+        <div id="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <form id="longin-form" action="{{ url_for('profile') }}" method="POST" >
+            <table align="center">
+                <tr>
+                    <td>Nom</td>
+                <td><h1 class="profile-name">{{ person[1] }} {{ person[2] }}</h1></td>
+                </tr>
+                <tr>
+                    <td>Numéro du téléphone</td>
+                <td><p class="profile-info">📞 {{person[3]}}</p></td>
+                </tr>
+            </table>
+        </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    </div>
+
+
+<script>
+        // Toggle Sidebar
+        document.getElementById("menu-btn").addEventListener("click", function () {
+            const sidebar = document.getElementById("sidebar");
+            const content = document.getElementById("content");
+
+            sidebar.classList.toggle("active");
+            content.classList.toggle("shifted");
+        });
+
+        // Function to filter table rows or cards based on search input
+        function filterItems() {
+            const input = document.getElementById('searchInput');
+            const filter = input.value.toLowerCase();
+            const tableRows = document.querySelectorAll('#dataTable tbody tr');
+
+            // Filter table rows
+            tableRows.forEach(row => {
+                const rowText = row.textContent.toLowerCase();
+                row.style.display = rowText.includes(filter) ? '' : 'none';
+            });
+        }
+
+    </script>
+</body>
+</html>

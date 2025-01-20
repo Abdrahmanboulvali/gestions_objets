@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Language" content="ar">
+    <title>تسجيل الدخول إلى إدارة الأشياء المفقودة</title>
+    <link rel ="stylesheet" type="text/css"
+      href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body align="center" dir="rtl">
+    <div class="login-container">
+        <form id="longin-form" action="{{ url_for('inserteee') }}" method="POST" >
+            <fieldset>
+                <legend><h4>تسجيل الدخول إلى "إدارة الأشياء المفقودة"</h4></legend>
+                <p class="form-group">
+                <input type="hidden" id="id_p" name="id_p" dir="rtl">
+                </p>
+                <p class="form-group">
+                <label dir="rtl">رقم الهاتف :</label><br>
+                <input type="number" id="tel" name="tel" placeholder="رقم الهاتف" dir="rtl">
+            </p>
+            <p class="form-group">
+                <label dir="rtl">كلمة السر :</label><br>
+                <input type="password" id="password" name="password" placeholder="كلمة السر" dir="rtl">
+            </p>
+            <p class="form-group">
+                <button type="submit">تسحيل الدخول</button>
+            </p>
+            <p class="form-group">
+                <a href="{{ url_for('home') }}"><h4>إنشاء حساب</h4></a>
+            </p>
+            </fieldset>
+        </form>
+    </div>
+    <script type="text/javascript"
+        src="{{ url_for('static', filename='longin.js') }}"></script>
+</body>
+</html>

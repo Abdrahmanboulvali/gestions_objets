@@ -1,0 +1,18 @@
+fieldset{
+    background-color: rgb(250, 244, 244);
+    border-radius: 3ex;
+}
+h1{
+    color: blue;
+}
+button{
+    color: rgb(227, 230, 233);
+    background-color: blue;
+}
+table{
+    table, th, td {
+        border: 1px solid black;
+        border-collapse: collapse;
+        padding: 10px;
+    }
+}

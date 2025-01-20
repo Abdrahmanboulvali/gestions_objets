@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Gestion des objets perdus</title>
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link href="css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style_table.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='new.css') }}">
+
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Nunito', sans-serif;
+            margin: 0;
+            background: linear-gradient(to bottom, #008080, #40e0d0);
+            color: #333;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -250px;
+            width: 250px;
+            height: 100%;
+            background: #004d4d;
+            color: white;
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            transition: left 0.3s ease;
+            z-index: 1000;
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .sidebar h2 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar ul li {
+            margin: 15px 0;
+        }
+
+        .sidebar ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            display: block;
+            padding: 10px;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+
+        .sidebar ul li a:hover {
+            background: #006666;
+        }
+
+        /* Content Styles */
+        .content {
+            margin-left: 0;
+            padding: 20px;
+            transition: margin-left 0.3s ease;
+        }
+
+        .content.shifted {
+            margin-left: 250px;
+        }
+
+        /* Header Styles */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .menu-btn {
+            font-size: 24px;
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+        }
+
+        /* Search Bar */
+        .search-bar {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .search-bar input {
+            width: 100%;
+            max-width: 600px;
+            padding: 10px;
+            border: none;
+            border-radius: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            font-size: 16px;
+        }
+    </style>
+    <!-- DataTable CSS -->
+<link href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+
+<!-- DataTable JavaScript -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+
+
+</head>
+<body>
+    <div class="main-container">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <h2>GESTION DES OBJETS PERDUS</h2>
+            <ul>
+                <li><a href="{{ url_for('hommm') }}"><i class="fas fa-fw fa-chart-area"></i> Statistiques</a></li>
+                <li><a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Déconnecter</a></li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content" id="content">
+            <!-- Header with Hamburger Menu -->
+            <div class="header">
+                <button class="menu-btn" id="menu-btn">&#9776;</button>
+                <h1>Liste des objets</h1>
+            </div>
+
+            <!-- Search Bar -->
+           <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Rechercher des objets..." onkeyup="filterItems()" />
+            </div>
+
+            <!-- Table Section -->
+            <div class="container-fluid">
+                <h6 class="font-weight-bold text-primary"></h6>
+                <table id="dataTable">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Statu</th>
+                            <th>Photo</th>
+                            <th>Distribution</th>
+                            <th>Emplacement</th>
+                            <th>Date</th>
+                            <th colspan="2">Etat</th>
+                            <th colspan="2">Information personelle</th>
+                            <th colspan="2">Actions</th>
+                        </tr>
+                    </thead>
+                        <tbody>
+                            {% for row in objets_admin %}
+                            <tr align="center">
+                                <td>{{row.1}}</td>
+                                <td>{{row.2}}</td>
+                                <td><img src="{{ url_for('static', filename=row[8].replace('static/', '')) }}" width="100" height="100"></td>
+                                <td>{{row.6}}</td>
+                                <td>{{row.4}}</td>
+                                <td>{{row.5}}</td>
+                                <td>{{row.9}}</td>
+                                <td align="center">
+                                    <a href="/update_admin/{{row.0}}" class="btn btn-danger btn-xs">Changer</a>
+                                <td>{{row.11}} {{row.12}}</td>
+                                <td>{{row.13}}</td>
+
+
+                                <td align="center">
+                                    <a href="/update_rec/{{row.0}}">Modifier</a>
+                                </td>
+                                <td align="center">
+                                    <a href="/delete/{{ row.0 }}" class="btn btn-danger btn-xs"
+                                        onclick="return confirm('هل أنت متأكد من أنك تريد حذف هذا العنصر')">Suprimer</a>
+                                </td>
+
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                <div class="pagination" id="pagination"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Toggle Sidebar
+        document.getElementById("menu-btn").addEventListener("click", function () {
+            const sidebar = document.getElementById("sidebar");
+            const content = document.getElementById("content");
+
+            sidebar.classList.toggle("active");
+            content.classList.toggle("shifted");
+        });
+
+        // Function to filter table rows or cards based on search input
+        function filterItems() {
+            const input = document.getElementById('searchInput');
+            const filter = input.value.toLowerCase();
+            const tableRows = document.querySelectorAll('#dataTable tbody tr');
+
+            // Filter table rows
+            tableRows.forEach(row => {
+                const rowText = row.textContent.toLowerCase();
+                row.style.display = rowText.includes(filter) ? '' : 'none';
+            });
+        }
+
+    </script>
+<script>
+    // Variables for pagination
+const rowsPerPage = 5; // عدد العناصر المعروضة في كل صفحة
+let currentPage = 1;
+let allRows = []; // لتخزين جميع الصفوف
+let filteredRows = []; // لتخزين الصفوف المصفاة
+
+// Function to render table rows based on current page and filter
+function renderTableRows() {
+    const startIndex = (currentPage - 1) * rowsPerPage;
+    const endIndex = startIndex + rowsPerPage;
+
+    // إخفاء كل الصفوف أولاً ثم عرض الصفوف وفقًا للصفحة الحالية
+    allRows.forEach(row => row.style.display = 'none');
+
+    // عرض الصفوف المصفاة بناءً على الصفحة الحالية
+    filteredRows.slice(startIndex, endIndex).forEach(row => {
+        row.style.display = ''; // عرض الصفوف
+    });
+
+    // تحديث الترقيم
+    updatePagination();
+}
+
+// Function to filter rows based on search input
+function filterItems() {
+    const input = document.getElementById('searchInput');
+    const filter = input.value.toLowerCase();
+    const tableRows = document.querySelectorAll('#dataTable tbody tr');
+
+    // تخزين جميع الصفوف الأصلية
+    allRows = Array.from(tableRows);
+
+    // تصفية الصفوف بناءً على النص المدخل
+    filteredRows = allRows.filter(row => {
+        const rowText = row.textContent.toLowerCase();
+        return rowText.includes(filter);
+    });
+
+    // إعادة تعيين الصفحة الحالية إلى الصفحة 1 بعد التصفية
+    currentPage = 1;
+
+    // إعادة عرض الصفوف بناءً على التصفية الحالية
+    renderTableRows();
+}
+
+// Function to update pagination buttons
+function updatePagination() {
+    const totalRows = filteredRows.length;
+    const totalPages = Math.ceil(totalRows / rowsPerPage);
+
+    const paginationContainer = document.getElementById('pagination');
+    paginationContainer.innerHTML = '';
+
+    // إضافة الأزرار الخاصة بالصفحات
+    for (let i = 1; i <= totalPages; i++) {
+        const button = document.createElement('button');
+        button.textContent = i;
+        button.className = i === currentPage ? 'active' : ''; // تمييز الصفحة الحالية
+        button.addEventListener('click', () => {
+            currentPage = i;
+            renderTableRows();
+        });
+        paginationContainer.appendChild(button);
+    }
+}
+
+// Initialize table rows and pagination on page load
+document.addEventListener('DOMContentLoaded', () => {
+    const tableRows = document.querySelectorAll('#dataTable tbody tr');
+    allRows = Array.from(tableRows); // تخزين جميع الصفوف الأصلية
+    filteredRows = allRows; // بدءًا، يتم عرض جميع الصفوف
+    renderTableRows();
+});
+
+</script>
+</body>
+</html>

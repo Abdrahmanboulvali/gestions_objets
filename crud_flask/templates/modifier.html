@@ -1,0 +1,53 @@
+<!DOCTYPE html >
+<html>
+<head>
+    <meta http-equiv="Content-type" content="text/html :charset=UTF-8"/>
+    <title>Formulaire </title>
+</head>
+<body>
+<h2>Modifier un(e) employé(e)</h2>
+<form action="{{ url_for('update') }}" method="POST">
+    <table border="0">
+        <input type="hidden" name="id_emp" value="{{emp[0]}} "/>
+        <tr>
+            <td><label>Nom complet :</label></td>
+            <td><input type="text" name="nom" value="{{emp[1]}}" required/></td>
+        </tr>
+        <tr>
+            <td><label>Date de naissance :</label></td>
+            <td><input type="date" name="date_naiss" maxlength="256" value="{{emp[2]}}" required/></td>
+        </tr>
+        <tr>
+            <td><label>E-mail : </label></td>
+            <td><input type="email" name="mail" maxlength="256" value="{{emp[3]}}" required/></td>
+        </tr>
+        <tr>
+            <td><label>Genre :</label></td>
+            <td>
+                <input type="radio" name="genre" value="homme" required {% if emp[4]== 'homme' %} checked {% endif %} /><label>Homme</label><br/>
+                <input type="radio" name="genre" value="femme" required {% if emp[4]== 'femme' %} checked {% endif %} /><label>Femme</label>
+            </td>
+
+        </tr>
+        <tr>
+            <td><label>Service :</label></td>
+            <td>
+                <select name="service" required>
+                    {% for service in services %}
+                    {% if service[0] == emp[5] %}
+                    <option value="{{ service[0] }}" selected>{{ service[1] }}</option>
+                    {% else %}
+                    <option value="{{ service[0] }}">{{ service[1] }}</option>
+                    {% endif %}
+                    {% endfor %}
+                </select>
+            </td>
+        </tr>
+    </table>
+    <br>
+    &nbsp;&nbsp;<input type="submit" value="Envoyer"/>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <input type="reset" value="Effacer"/>
+</form>
+<br>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html >
+<html >
+   <head>
+      <meta http-equiv="Content-type" content="text/html :charset=UTF-8"/>
+      <title>Formulaire </title>
+      <link rel ="stylesheet" type="text/css"
+      href="{{ url_for('static', filename='Style1.css') }}">
+   </head>
+   <body>
+   <fieldset align="center">
+      <legend><h2 >Ajouter un(e) etudiant(e)</h2></legend>
+         <form action="{{ url_for('insert') }}" method="post" align="center">
+            <table border="0" align="center">
+               <tr>
+                  <td><label>Nom :</label></td>
+                  <td><input type="text" name="nom"  required  /></td>
+               </tr>
+               <tr>
+                  <td><label>Prénom :</label></td>
+                  <td><input type="text" name="prenom" maxlength="256" required  /></td>
+               </tr>
+               <tr>
+                  <td><label>E-mail : </label></td>
+                  <td><input type="email" name="email"  maxlength="256" placeholder="23...@isms.esp.mr" required  /></td>
+               </tr>
+               <tr>
+                  <td><label>Tel :</label></td>
+                  <td><input type="number" name="tel" placeholder="_._ _._ _._ _._" required></td>
+               </tr>
+               <tr>
+                  <td>
+                     <select name="code_dep" required>
+                        <option value="null">Choisissez un departement </option>
+                        {% for departement in departements %}
+                        <option value="{{ departement.0 }}">{{ departement.1 }}</option>
+                        {% endfor %}
+                     </select>
+                  </td>
+               </tr>
+            </table>
+            <br>
+         &nbsp;&nbsp;   <input type="submit" value="Envoyer" />
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    <input type="reset" value="Effacer" />
+         </form>
+         <br>
+   </fieldset>
+      <a href="{{ url_for('Index') }}" align="center">
+         <h4>Liste des etudiants</h4>
+      </a>
+   </body>
+</html>

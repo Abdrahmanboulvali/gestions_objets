@@ -1,0 +1,247 @@
+/* تخصيص مظهر الجدول */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-family: 'Arial', sans-serif;
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background-color: #f2f2f2;
+    color: #333;
+}
+
+/* تنسيق مظهر صفوف الجدول عند المرور عليها */
+tr:hover {
+    background-color: #f9f9f9;
+}
+
+/* تخصيص مظهر مربع البحث */
+#searchInput {
+    width: 100%;
+    padding: 10px;
+    margin: 20px 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+#searchInput:focus {
+    border-color: #4CAF50;
+    outline: none;
+}
+
+/* تنسيق روابط الترقيم (صفحات) */
+#pagination {
+    text-align: center;
+    margin-top: 20px;
+}
+
+#pagination a {
+    display: inline-block;
+    margin: 0 5px;
+    padding: 10px 15px;
+    background-color: #f2f2f2;
+    color: #333;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+#pagination a:hover {
+    background-color: #4CAF50;
+    color: white;
+}
+
+#pagination a.active {
+    background-color: #4CAF50;
+    color: white;
+    font-weight: bold;
+}
+
+/* تنسيق الرسائل عند عدم وجود نتائج */
+#noResultsMessage {
+    text-align: center;
+    font-size: 18px;
+    color: #ff6347;
+    margin-top: 20px;
+}
+
+/* تحسين لون الخلفية */
+body {
+    background-color: #004d66; /* لون أزرق داكن يتناسق مع التصميم */
+    color: #ffffff; /* لون النص أبيض */
+}
+
+/* تحسين تصميم الجدول */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 16px;
+    text-align: left;
+    background-color: #ffffff; /* خلفية بيضاء للجدول */
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+table th, table td {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+}
+
+table th {
+    background-color: #007b8f; /* لون رأس الجدول */
+    color: #ffffff;
+    font-weight: bold;
+}
+
+table tr:nth-child(even) {
+    background-color: #f3f3f3; /* لون مختلف للصفوف الزوجية */
+}
+
+/* تحسين أزرار "Modifier" و "Supprimer" */
+button, .btn {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button.modifier, .btn.modifier {
+    background-color: #28a745; /* لون أخضر */
+    color: #ffffff;
+}
+
+button.modifier:hover, .btn.modifier:hover {
+    background-color: #218838;
+}
+
+button.supprimer, .btn.supprimer {
+    background-color: #dc3545; /* لون أحمر */
+    color: #ffffff;
+}
+
+button.supprimer:hover, .btn.supprimer:hover {
+    background-color: #c82333;
+}
+
+/* تحسين شريط البحث */
+input[type="search"] {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+/* تحسين العناوين */
+h6 {
+    font-size: 18px;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+/* تحسين البطاقات */
+.card {
+    background-color: #007b8f; /* لون أزرق */
+    color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    background-color: #005f73; /* لون أغمق للرأس */
+    color: #ffffff;
+    font-weight: bold;
+}
+/* الشريط الجانبي */
+#accordionSidebar {
+    background-color: #005f73; /* لون أزرق داكن */
+    color: #ffffff;
+    width: 250px; /* عرض الشريط الجانبي */
+    transition: all 0.3s ease; /* تأثير الانتقال عند الفتح والإغلاق */
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+}
+
+/* عند تمرير الماوس على الشريط الجانبي */
+#accordionSidebar:hover {
+    width: 270px; /* توسيع الشريط الجانبي عند التمرير */
+}
+
+/* عناصر القائمة داخل الشريط الجانبي */
+#accordionSidebar .nav-item {
+    margin: 10px 0;
+}
+
+#accordionSidebar .nav-link {
+    color: #ffffff;
+    font-size: 16px;
+    padding: 10px 20px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+#accordionSidebar .nav-link:hover {
+    background-color: #007b8f; /* لون أزرق فاتح عند التمرير */
+    color: #ffffff;
+}
+
+/* أيقونات الشريط الجانبي */
+#accordionSidebar .nav-link i {
+    margin-right: 10px;
+    font-size: 18px;
+}
+
+/* العنوان في الشريط الجانبي */
+.sidebar-brand {
+    text-align: center;
+    padding: 20px 0;
+    font-size: 18px;
+    font-weight: bold;
+    color: #ffffff;
+    background-color: #004d66; /* لون أغمق للرأس */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-brand-icon {
+    font-size: 24px;
+    margin-right: 10px;
+}
+
+/* الفاصل بين الأقسام */
+.sidebar-divider {
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    margin: 15px 0;
+}
+
+/* زر إغلاق الشريط الجانبي */
+#sidebarToggle {
+    background-color: #007b8f;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 12px;
+    transition: background-color 0.3s ease;
+}
+
+#sidebarToggle:hover {
+    background-color: #005f73;
+}
+
+/* تحسين النصوص */
+#accordionSidebar .nav-link span {
+    font-size: 14px;
+    font-weight: bold;
+}

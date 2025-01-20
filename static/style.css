@@ -1,0 +1,91 @@
+
+        /* تعميم التصميم */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Tajawal', Arial, sans-serif;
+            background-color: #4B0082;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        /* تصميم الصندوق */
+        .login-container {
+            background: #87CEEB;
+            padding: 30px 20px;
+            border-radius: 12px;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease; /* تأثير سلس عند التحويم */
+            width: 350px;
+            text-align: center;
+        }
+        .login-container:hover {
+            transform: translateY(-5px); /* تحريك العنصر لأعلى */
+            box-shadow:
+                0 10px 15px rgba(0, 0, 0, 0.3),
+                0 15px 20px rgba(0, 0, 0, 0.25); /* زيادة الظل */
+        }
+
+        /* العنوان */
+        h2 {
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            color: #333333;
+        }
+
+        /* الحقول */
+        .input-field {
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .input-field input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            box-sizing: border-box;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .input-field input:focus {
+            border-color: #007bff;
+            box-shadow: 0px 0px 8px rgba(0, 123, 255, 0.3);
+        }
+
+        /* زر تسجيل الدخول */
+        .btn-login {
+            background-color: #28a745;
+            color: white;
+            border: 20px;
+            padding: 10px 20px;
+            width: 100%;
+            border-radius: 8px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-login:hover {
+            background-color: #218838;
+        }
+
+        /* زر إنشاء حساب */
+        .create-account {
+            margin-top: 15px;
+            font-size: 0.9em;
+            color: #007bff;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .create-account:hover {
+            text-decoration: underline;
+        }

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>معلومات عن الشيء المفقود</title>
+    <link rel ="stylesheet" type="text/css"
+      href="{{ url_for('static', filename='style.css') }}">
+    <link rel ="stylesheet" type="text/css"
+      href="{{ url_for('static', filename='style2.css') }}">
+    <link rel ="stylesheet" type="text/css"
+      href="{{ url_for('static', filename='login.css') }}">
+</head>
+<body>
+<div class="login-container">
+        <form action="{{ url_for('update') }}" id="objet-form" method="POST">
+            <fieldset>
+                <legend><h4>معلومات الشيء المفقود</h4></legend>
+                <p class="form-group">
+                <label dir="rtl">النوع :</label>
+                <input type="text" id="type" name="type" value="{{objet[1]}}" dir="rtl">
+            </p>
+            <p class="form-group">
+                <select name="statu" >
+                    <option value="null">اختر الحالة</option>
+                    <option value="فقد">فقد</option>
+                    <option value="إيجاد">إيجاد</option>
+                </select>
+            </p>
+            <p class="form-group">
+                <label dir="rtl">الوصف :</label>
+                <textarea id="destribition" name="destribition" rows="{{objet[3]}}" dir="rtl"></textarea>
+            </p>
+            <p class="form-group">
+                <label dir="rtl">الموضع :</label>
+                <textarea id="place" name="place" rows="{{objet[4]}}" dir="rtl"></textarea>
+            </p>
+            <p class="form-group">
+                <label dir="rtl">التاريخ :</label>
+                <input type="date" id="date" name="date" value="{{objet[5]}}" dir="rtl">
+            </p>
+            <p class="form-group">
+                <label dir="rtl">صورة(إن وجدت) :</label>
+                <input type="file" id="imageInput" name="photo" accept="image/*">
+                    <div id="imageContainer"></div>
+            </p>
+            <p>
+                <input type="hidden" id="user_id" name="user_id" value="{{ session['user_id'] }}">
+            </p>
+                <p>
+                <input type="hidden" id="id_o" name="id_o" value="{{ objet[0] }}">
+            </p>
+            <p class="form-group">
+                <button type="submit">إرسال</button>
+            </p>
+            <p class="form-group">
+            </p>
+            </fieldset>
+        </form>
+    </div>
+<script type="text/javascript"
+        src="{{ url_for('static', filename='objet.js') }}"></script>
+<br>
+</body>
+</html>

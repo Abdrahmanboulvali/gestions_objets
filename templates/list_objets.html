@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel ="stylesheet" type="text/css"
+      href="{{ url_for('static', filename='style_table.css') }}">
+</head>
+<body dir="rtl">
+<div class="grid-container">
+    <h2 align="center" class="title">لائحة الأشياء المفقودة</h2><br><br>
+<button class="add-item-btn">
+    <a href="{{ url_for('homee') }}"><h4>إضافة عنصر</h4></a>
+</button>
+
+
+<table style="width:100%" dir="rtl" align="center">
+    <tr>
+        <th>النوع</th>
+        <th>الحالة</th>
+        <th>الصورة</th>
+        <th>الوصف</th>
+        <th>الموقع</th>
+        <th>التاريخ</th>
+        <th colspan="2">معلومات صاحب الإعلان</th>
+        <th colspan="2">النشاطات</th>
+    </tr>
+    {% for row in objets_p %}
+    <tr align="center">
+        <td>{{row.1}}</td>
+        <td>{{row.2}}</td>
+        <td>{{row.3}}</td>
+        <td>{{row.6}}</td>
+        <td>{{row.4}}</td>
+        <td>{{row.5}}</td>
+        <td>{{row.9}} {{row.10}}</td>
+        <td>{{row.11}}</td>
+
+
+        <td align="center">
+            <a href="/update_rec/{{row.0}}">تعديل</a>
+        </td>
+        <td align="center">
+            <a href="/delete/{{ row.0 }}" class="btn btn-danger btn-xs"
+               onclick="return confirm('هل أنت متأكد من أنك تريد حذف هذا العنصر')">حذف</a>
+        </td>
+
+    </tr>
+    {% endfor %}
+</table>
+</div>
+
+</body>
+</html>

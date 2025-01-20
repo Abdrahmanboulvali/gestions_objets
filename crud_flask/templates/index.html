@@ -1,0 +1,50 @@
+<!DOCTYPE html >
+<html >
+   <head>
+      <meta http-equiv="Content-type" content="text/html :charset=UTF-8"/>
+      <title>Formulaire </title>
+   </head>
+   <body>
+      <h2 >Ajouter un(e) employé(e)</h2>
+      <form action="{{ url_for('insert') }}" method="post" >
+         <table border="0">
+            <tr>
+               <td><label>Nom complet :</label></td>
+               <td><input type="text" name="nom"  required  /></td>
+            </tr>
+            <tr>
+               <td><label>Date de naissance :</label></td>
+               <td><input type="date" name="date_naiss" maxlength="256" required  /></td>
+            </tr>
+            <tr>
+               <td><label>E-mail : </label></td>
+               <td><input type="email" name="mail"  maxlength="256" placeholder="23...@isms.esp.mr" required  /></td>
+            </tr>
+            <tr>
+               <td><label>Genre :</label></td>
+               <td><input type="radio" name="genre" value="homme" required /><label>Homme </label> <br />
+                  <input type="radio" name="genre" value="femme" required  /><label>Femme</label>
+               </td>
+            </tr>
+            <tr>
+               <td><label>Service :</label></td>
+               <td>
+                  <select name="service" required >
+                     <option value="null">Choisissez un service</option>
+                     {% for service in services %}
+                     <option value="{{ service.0 }}">{{ service.1 }}</option>
+                     {% endfor %}
+                  </select>
+               </td>
+            </tr>
+         </table>
+         <br>
+         &nbsp;&nbsp;<input type="submit" value="Envoyer" />
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <input type="reset" value="Effacer" />
+      </form>
+      <br>
+      <a href="{{ url_for('Index') }}">
+         <h4>Liste des employés</h4>
+      </a>
+   </body>
+</html>

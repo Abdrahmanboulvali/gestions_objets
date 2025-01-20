@@ -1,0 +1,52 @@
+<!DOCTYPE html >
+<html>
+<head>
+    <meta http-equiv="Content-type" content="text/html :charset=UTF-8"/>
+    <title>Formulaire </title>
+    <link rel ="stylesheet" type="text/css"
+      href="{{ url_for('static', filename='Style1.css') }}">
+</head>
+<body>
+<fieldset align="center">
+    <legend>Modifier un(e) etudiant(e)</h2></legend>
+<form action="{{ url_for('update') }}" method="POST">
+    <table border="0" align="center">
+        <input type="hidden" name="matricule" value="{{etud[0]}} "/>
+        <tr>
+            <td><label>Nom :</label></td>
+            <td><input type="text" name="nom" value="{{etud[1]}}" required/></td>
+        </tr>
+        <tr>
+            <td><label>Prénom :</label></td>
+            <td><input type="text" name="prenom" maxlength="256" value="{{etud[2]}}" required/></td>
+        </tr>
+        <tr>
+            <td><label>E-mail : </label></td>
+            <td><input type="email" name="email" maxlength="256" value="{{etud[3]}}" required/></td>
+        </tr>
+        <tr>
+            <td><label>Tel :</label></td>
+            <td><input type="number" name="tel"  value="{{etud[4]}}" placeholder="_._ _._ _._ _._" required/></td>
+        </tr>
+        <tr>
+               <td>
+                <select name="Departement" required>
+                    {% for departement in departements %}
+                    {% if departement[0] == etud[5] %}
+                    <option value="{{ departement[0] }}" selected>{{ departement[1] }}</option>
+                    {% else %}
+                    <option value="{{ departement[0] }}">{{ departement[1] }}</option>
+                    {% endif %}
+                    {% endfor %}
+                </select>
+            </td>
+            </tr>
+    </table>
+    <br>
+    <input type="submit" value="Envoyer"/>
+     <input type="reset" value="Effacer"/>
+</form>
+</fieldset>
+<br>
+</body>
+</html>

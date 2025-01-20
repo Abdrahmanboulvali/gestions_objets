@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <link rel ="stylesheet" type="text/css"
+      href="{{ url_for('static', filename='style_table.css') }}">
+</head>
+<body>
+<div class="login-container">
+
+    <table align="center" dir="rtl">
+
+        <tr>
+            <th>الإسم</th>
+            <th>رقم الهاتف</th>
+        </tr>
+        {% for row in person_pr %}
+        <tr>
+            <td>{{row.10}} {{row.11}}</td>
+            <td>{{row.12}}</td>
+        </tr>
+        {% endfor %}
+
+    </table>
+    </form>
+</div>
+
+</body>
+</html>
