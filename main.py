@@ -11,7 +11,7 @@ app = Flask(__name__)
 CORS(app)  # Autorise toutes les origines
 
 
-
+#this is a comment 
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = ''
