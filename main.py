@@ -10,6 +10,7 @@ from werkzeug.utils import secure_filename
 app = Flask(__name__)
 CORS(app)  # Autorise toutes les origines
 
+
 #this is a comment 
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
@@ -22,31 +23,6 @@ mysql = MySQL(app)
 # Configuration pour le téléchargement des fichiers
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
-def envoyer_otp():
-    num_tel = session.get('tel')
-    if not num_tel:
-        return "Entrez votre numéro de téléphone SVP", 400
-
-    if not num_tel.startswith('+'):
-        num_tel = f"+222{num_tel}"
-
-    if not num_tel[1:].isdigit():
-        return "Le numéro de téléphone doit inclure l'indicatif du pays (ex: +222) et être valide", 400
-
-    otp = random.randint(100000, 999999)
-    session['otp'] = otp
-
-    try:
-        message = client.messages.create(
-            body=f"Votre code de verification est : {otp}",
-            from_=twilio_phone_number,
-            to=num_tel
-        )
-
-        return f"Le code de verification a été envoyé avec succès: {otp}", 200
-    except Exception as e:
-        return f"Echec de l'envoi du code de vérification : {str(e)}", 500
 
 
 @app.route('/verification_otp', methods=['POST'])
