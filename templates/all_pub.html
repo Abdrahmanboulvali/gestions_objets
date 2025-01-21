@@ -1,17 +1,27 @@
-<!DOCTYPE html>
-<html lang="ar">
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Gestion des objets perdus</title>
-    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
-    <link href="css/sb-admin-2.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style_table.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='new.css') }}">
 
-    <style>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des objets touvés-perdus</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- DataTables Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/style_table.css">
+    <link rel="stylesheet" type="text/css" href="/static/new.css">
+<style>
         /* General Styles */
         body {
             font-family: 'Nunito', sans-serif;
@@ -118,24 +128,14 @@
             font-size: 16px;
         }
     </style>
-    <!-- DataTable CSS -->
-<link href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" rel="stylesheet">
-
-<!-- DataTable JavaScript -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
-
-
 </head>
 <body>
-    <div class="main-container">
-        <!-- Sidebar -->
+    <div class="container my-4" style="margin-left: auto; margin-right: auto;">
         <div class="sidebar" id="sidebar">
             <h2>GESTION DES OBJETS PERDUS</h2>
             <ul>
                 <li><a href="{{ url_for('hommm') }}"><i class="fas fa-fw fa-chart-area"></i> Statistiques</a></li>
-                <li><a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Déconnecter</a></li>
+                <li><a href="{{ url_for('logoutadmin') }}"><i class="fas fa-sign-out-alt"></i> Déconnecter</a></li>
             </ul>
         </div>
 
@@ -146,63 +146,73 @@
                 <button class="menu-btn" id="menu-btn">&#9776;</button>
                 <h1>Liste des objets</h1>
             </div>
+        <div class="d-flex justify-content-end mb-3">
 
-            <!-- Search Bar -->
-           <div class="search-bar">
-                <input type="text" id="searchInput" placeholder="Rechercher des objets..." onkeyup="filterItems()" />
-            </div>
-
-            <!-- Table Section -->
-            <div class="container-fluid">
-                <h6 class="font-weight-bold text-primary"></h6>
-                <table id="dataTable">
-                    <thead>
-                        <tr>
-                            <th>Type</th>
-                            <th>Statu</th>
-                            <th>Photo</th>
-                            <th>Distribution</th>
-                            <th>Emplacement</th>
-                            <th>Date</th>
-                            <th colspan="2">Etat</th>
-                            <th colspan="2">Information personelle</th>
-                            <th colspan="2">Actions</th>
-                        </tr>
-                    </thead>
-                        <tbody>
-                            {% for row in objets_admin %}
-                            <tr align="center">
-                                <td>{{row.1}}</td>
-                                <td>{{row.2}}</td>
-                                <td><img src="{{ url_for('static', filename=row[8].replace('static/', '')) }}" width="100" height="100"></td>
-                                <td>{{row.6}}</td>
-                                <td>{{row.4}}</td>
-                                <td>{{row.5}}</td>
-                                <td>{{row.9}}</td>
-                                <td align="center">
-                                    <a href="/update_admin/{{row.0}}" class="btn btn-danger btn-xs">Changer</a>
-                                <td>{{row.11}} {{row.12}}</td>
-                                <td>{{row.13}}</td>
+        </div><table id="articlesTable" class="table table-striped table-bordered">
+    <thead>
+        <tr>
+            <th>Type</th>
+            <th>Statu</th>
+            <th>Photo</th>
+            <th>Distribution</th>
+            <th>Emplacement</th>
+            <th>Date</th>
+            <th>Information personelle</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+   <tbody>
+        {% for row in objets_admin %}
+        <tr align="center">
+            <td>{{row.2}}</td>
+            <td>{{row.1}}</td>
+            <td>{{row.5}}</td>
+            <td>{{row.3}}</td>
+            <td>{{row.4}}</td>
+            <td><img src="{{ url_for('static', filename=row[7].replace('static/', '')) }}" width="100" height="100"></td>
+            <td>{{row.11}} {{row.12}} [{{row.13}}]</td>
 
 
-                                <td align="center">
-                                    <a href="/update_rec/{{row.0}}">Modifier</a>
-                                </td>
-                                <td align="center">
-                                    <a href="/delete/{{ row.0 }}" class="btn btn-danger btn-xs"
-                                        onclick="return confirm('هل أنت متأكد من أنك تريد حذف هذا العنصر')">Suprimer</a>
-                                </td>
+            <td align="center">
+    <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+        <a href="/updateadmin/{{ row.0 }}" style="margin-right: 10px;">
+            <i class="fas fa-fw fa-edit"></i>
+        </a>
+        <a href="/deleteadmin/{{ row.0 }}" class="btn btn-danger btn-xs"
+            onclick="return confirm('هل أنت متأكد من أنك تريد حذف هذا العنصر')">
+            <i class="fas fa-fw fa-trash delete-icon"></i>
+        </a>
+        <br>
+        <p style="margin: 0; font-size: 14px;">{{ row.8 }}</p>
 
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                <div class="pagination" id="pagination"></div>
-            </div>
-        </div>
+        <a href="/upadmin/{{ row.0 }}" class="btn btn-info btn-xs" style="margin-left: 10px;">
+            <i class="fas fa-fw fa-exchange-alt" style="color: blue; transform: scale(0.8);"></i>
+        </a>
+    </div>
+</td>
+
+
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
     </div>
 
     <script>
+        $(document).ready(function () {
+    $('#articlesTable').DataTable({
+        language: {
+            url: "//cdn.datatables.net/plug-ins/1.13.6/i18n/fr-FR.json"
+        },
+        responsive: true,
+        columnDefs: [
+            { targets: 2, orderable: false }, // تعطيل الترتيب لعمود الصور
+            { targets: 7, orderable: false }  // تعطيل الترتيب لعمود الأنشطة
+        ]
+    });
+});
+    </script>
+        <script>
         // Toggle Sidebar
         document.getElementById("menu-btn").addEventListener("click", function () {
             const sidebar = document.getElementById("sidebar");
@@ -226,81 +236,6 @@
         }
 
     </script>
-<script>
-    // Variables for pagination
-const rowsPerPage = 5; // عدد العناصر المعروضة في كل صفحة
-let currentPage = 1;
-let allRows = []; // لتخزين جميع الصفوف
-let filteredRows = []; // لتخزين الصفوف المصفاة
-
-// Function to render table rows based on current page and filter
-function renderTableRows() {
-    const startIndex = (currentPage - 1) * rowsPerPage;
-    const endIndex = startIndex + rowsPerPage;
-
-    // إخفاء كل الصفوف أولاً ثم عرض الصفوف وفقًا للصفحة الحالية
-    allRows.forEach(row => row.style.display = 'none');
-
-    // عرض الصفوف المصفاة بناءً على الصفحة الحالية
-    filteredRows.slice(startIndex, endIndex).forEach(row => {
-        row.style.display = ''; // عرض الصفوف
-    });
-
-    // تحديث الترقيم
-    updatePagination();
-}
-
-// Function to filter rows based on search input
-function filterItems() {
-    const input = document.getElementById('searchInput');
-    const filter = input.value.toLowerCase();
-    const tableRows = document.querySelectorAll('#dataTable tbody tr');
-
-    // تخزين جميع الصفوف الأصلية
-    allRows = Array.from(tableRows);
-
-    // تصفية الصفوف بناءً على النص المدخل
-    filteredRows = allRows.filter(row => {
-        const rowText = row.textContent.toLowerCase();
-        return rowText.includes(filter);
-    });
-
-    // إعادة تعيين الصفحة الحالية إلى الصفحة 1 بعد التصفية
-    currentPage = 1;
-
-    // إعادة عرض الصفوف بناءً على التصفية الحالية
-    renderTableRows();
-}
-
-// Function to update pagination buttons
-function updatePagination() {
-    const totalRows = filteredRows.length;
-    const totalPages = Math.ceil(totalRows / rowsPerPage);
-
-    const paginationContainer = document.getElementById('pagination');
-    paginationContainer.innerHTML = '';
-
-    // إضافة الأزرار الخاصة بالصفحات
-    for (let i = 1; i <= totalPages; i++) {
-        const button = document.createElement('button');
-        button.textContent = i;
-        button.className = i === currentPage ? 'active' : ''; // تمييز الصفحة الحالية
-        button.addEventListener('click', () => {
-            currentPage = i;
-            renderTableRows();
-        });
-        paginationContainer.appendChild(button);
-    }
-}
-
-// Initialize table rows and pagination on page load
-document.addEventListener('DOMContentLoaded', () => {
-    const tableRows = document.querySelectorAll('#dataTable tbody tr');
-    allRows = Array.from(tableRows); // تخزين جميع الصفوف الأصلية
-    filteredRows = allRows; // بدءًا، يتم عرض جميع الصفوف
-    renderTableRows();
-});
-
-</script>
+    </div>
 </body>
 </html>

@@ -40,15 +40,15 @@ def get_objets():
             'id_o': row[0],
             'type': row[1],
             'statu': row[2],
-            'destribition': row[6],
-            'emplacement': row[4],
-            'date': row[5],
+            'destribition': row[5],
+            'emplacement': row[3],
+            'date': row[4],
             'nom': row[11],
             'prenome': row[12],
             'id_p': row[10],
-            'etat':row[9],
+            'etat':row[8],
             'num_tel': row[13],
-            'image': url_for('static', filename=row[8].replace('static/', ''), _external=True) if row[8] else None
+            'image': url_for('static', filename=row[7].replace('static/', ''), _external=True) if row[7] else None
         }
         for row in objects
     ]

@@ -10,6 +10,12 @@ from werkzeug.utils import secure_filename
 app = Flask(__name__)
 CORS(app)  # Autorise toutes les origines
 
+account_sid = "ACa95ab4e41f99b202e1b1f0819d9b3771"
+auth_token = "0ef7113d41987ab32821a42c1e187bb4"
+twilio_phone_number = "+15673443856"  # Corrected format
+app.secret_key ="abderrahmane"
+
+client = Client(account_sid, auth_token)
 
 #this is a comment 
 app.config['MYSQL_HOST'] = 'localhost'
@@ -109,9 +115,15 @@ def inserteee():
             return redirect(url_for('Index'))
         else:
             if n_tel == '37614881' and password == '23605':
+                session['admin'] = '23605'
                 return redirect(url_for('Indexadmin'))
             else:
-                return 'رقم الهاتف أو كلمة المرور غير صحيحة، رجاءا أعد المحاولة'
+                return 'Numéro du téléphone ou le mot de passe est incorret !'
+
+@app.route('/logoutadmin')
+def logoutadmin():
+    session.pop('admin', None)
+    return redirect(url_for('hom'))
 
 @app.route('/logout')
 def logout():
@@ -119,18 +131,20 @@ def logout():
     return redirect(url_for('hom'))
 
 
-@app.route('/update_admin/<int:id_o>')
+@app.route('/upadmin/<int:id_o>')
 def upadmin(id_o):
-    etat = 'active'
-    cur = mysql.connection.cursor()
-    cur.execute("""
-            UPDATE objet_p_t
-            SET etat = %s
-            WHERE id_o = %s
-        """, (etat, id_o))
-    mysql.connection.commit()
-    cur.close()
-    return redirect(url_for('Indexadmin'))
+    if 'admin' in session:
+        etat = 'active'
+        cur = mysql.connection.cursor()
+        cur.execute("""
+                UPDATE objet_p_t
+                SET etat = %s
+                WHERE id_o = %s
+            """, (etat, id_o))
+        mysql.connection.commit()
+        cur.close()
+        return redirect(url_for('Indexadmin'))
+    return redirect(url_for('hom'))
 
 @app.route('/h', methods = ['POST', 'GET'])
 def Index():
@@ -153,18 +167,19 @@ def Index3():
         data = cur.fetchall()
         cur.close()
         return render_template('tables.html', objets_p=data)
-    return redirect(url_for('/hom'))
+    return redirect(url_for('hom'))
 
 
 @app.route('/hadmin')
 def Indexadmin():
-    cur = mysql.connection.cursor()
-    cur.execute(
-        "SELECT  * FROM objet_p_t, person_p_t where person_p_t.id_p=objet_p_t.id_p and objet_p_t.etat = 'inactive' ")
-    data = cur.fetchall()
-    cur.close()
-    return render_template('all_pub.html', objets_admin=data)
-
+    if 'admin' in session:
+        cur = mysql.connection.cursor()
+        cur.execute(
+            "SELECT  * FROM objet_p_t, person_p_t where person_p_t.id_p=objet_p_t.id_p")
+        data = cur.fetchall()
+        cur.close()
+        return render_template('all_pub.html', objets_admin=data)
+    return redirect(url_for('hom'))
 @app.route('/home')
 def home():
     cur = mysql.connection.cursor()
@@ -182,7 +197,7 @@ def profile():
         data = cur.fetchone()
         cur.close()
         return render_template('Profile.html' , person=data)
-    return redirect(url_for('/hom'))
+    return redirect(url_for('hom'))
 
 
 @app.route('/homee')
@@ -193,7 +208,7 @@ def homee():
         data = cur.fetchall()
         cur.close()
         return render_template('objet.html' , objets=data)
-    return redirect(url_for('/hom'))
+    return redirect(url_for('hom'))
 
 
 @app.route('/insert', methods=['POST'])
@@ -224,73 +239,111 @@ def insert():
 
 @app.route('/inserte', methods=['POST'])
 def inserte():
-    global filename
-    if request.method == "POST":
-        type = request.form['type']
-        statu = request.form['statu']
-        place = request.form['place']
-        destribition = request.form['destribition']
-        date = request.form['date']
-        etat = request.form['etat']
-        id_p = session['user_id']
-        file = request.files['file']
-        file_path = None
-        if file and file.filename != '':
-            # Sécuriser le nom de fichier et l'enregistrer
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            file_path = f"{UPLOAD_FOLDER}/{filename}"
+    if 'user_id' in session:
+        global filename
+        if request.method == "POST":
+            type = request.form['type']
+            statu = request.form['statu']
+            place = request.form['place']
+            destribition = request.form['destribition']
+            date = request.form['date']
+            etat = request.form['etat']
+            id_p = session['user_id']
+            file = request.files['file']
+            file_path = None
+            if file and file.filename != '':
+                # Sécuriser le nom de fichier et l'enregistrer
+                filename = secure_filename(file.filename)
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                file_path = f"{UPLOAD_FOLDER}/{filename}"
 
-        cur = mysql.connection.cursor()
-        cur.execute("INSERT INTO objet_p_t (type, statu, file_path, emplacement, destribition, date_p_t, id_p, etat)"
-                    "VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
-                    (type, statu, file_path, place, destribition, date, id_p, etat))
-        mysql.connection.commit()
-        cur.close()
+            cur = mysql.connection.cursor()
+            cur.execute("INSERT INTO objet_p_t (type, statu, file_path, emplacement, destribition, date_p_t, id_p, etat)"
+                        "VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
+                        (type, statu, file_path, place, destribition, date, id_p, etat))
+            mysql.connection.commit()
+            cur.close()
 
-        return redirect(url_for('Index'))
+            return redirect(url_for('Index'))
+        return redirect(url_for('hom'))
 
 # Route : Mettre à jour un item
-@app.route('/update_rec/<int:id_o>', methods=['GET', 'POST'])
+@app.route('/update/<int:id_o>', methods=['GET', 'POST'])
 def update(id_o):
-    cur = mysql.connection.cursor()
+    if 'user_id' in session:
+        cur = mysql.connection.cursor()
+        if request.method == 'POST':
+            type = request.form['type']
+            statu = request.form['statu']
+            place = request.form['place']
+            destribition = request.form['destribition']
+            date = request.form['date']
+            file = request.files['file']
+            # Gérer le téléchargement de l'image si elle est fournie
+            if file and allowed_file(file.filename):
+                filename = secure_filename(file.filename)
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                image_path = f"{UPLOAD_FOLDER}/{filename}"
+                # Mettre à jour avec une nouvelle image
+                cur.execute("""
+                        UPDATE objet_p_t
+                        SET type = %s,
+                            statu = %s,
+                            file_path = %s,
+                            emplacement = %s,
+                            destribition = %s,
+                            date_p_t = %s
+                        WHERE id_o = %s
+                    """, (type, statu, image_path, place, destribition, date, id_o))
 
-    if request.method == 'POST':
-        type = request.form['type']
-        statu = request.form['statu']
-        place = request.form['place']
-        destribition = request.form['destribition']
-        date = request.form['date']
-        file = request.files['file']
-        # Gérer le téléchargement de l'image si elle est fournie
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            image_path = f"{UPLOAD_FOLDER}/{filename}"
-            # Mettre à jour avec une nouvelle image
-            cur.execute("""
-                    UPDATE objet_p_t
-                    SET type = %s,
-                        statu = %s,
-                        file_path = %s,
-                        emplacement = %s,
-                        destribition = %s,
-                        date_p_t = %s
-                    WHERE id_o = %s
-                """, (type, statu, image_path, place, destribition, date, id_o))
+            mysql.connection.commit()
+            cur.close()
+            return redirect(url_for('Index'))
 
-        mysql.connection.commit()
+        cur.execute(
+            "SELECT id_o, type, destribition, emplacement, date_p_t, file_path, statu FROM objet_p_t WHERE id_o = %s",
+            (id_o,))
+        objet = cur.fetchone()
         cur.close()
-        return redirect(url_for('Index'))
 
-    # Récupérer les données actuelles de l'item
-    id_p = session['user_id']
-    cur = mysql.connection.cursor()
-    cur.execute("SELECT id_p FROM objet_p_t WHERE id_o=%s", ([id_o]))
-    result = cur.fetchone()
-    if result[0] != id_p:
-        return "Vous n'avez pas le droit de modifier cet article"
-    else:
+        return render_template('modifier.html', objet=objet)
+    return redirect(url_for('hom'))
+
+@app.route('/updateadmin/<int:id_o>', methods=['GET', 'POST'])
+def updateadmin(id_o):
+    if 'admin' in session:
+        cur = mysql.connection.cursor()
+
+        if request.method == 'POST':
+            type = request.form['type']
+            statu = request.form['statu']
+            place = request.form['place']
+            destribition = request.form['destribition']
+            date = request.form['date']
+            file = request.files['file']
+            # Gérer le téléchargement de l'image si elle est fournie
+            if file and allowed_file(file.filename):
+                filename = secure_filename(file.filename)
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                image_path = f"{UPLOAD_FOLDER}/{filename}"
+                # Mettre à jour avec une nouvelle image
+                cur.execute("""
+                        UPDATE objet_p_t
+                        SET type = %s,
+                            statu = %s,
+                            file_path = %s,
+                            emplacement = %s,
+                            destribition = %s,
+                            date_p_t = %s
+                        WHERE id_o = %s
+                    """, (type, statu, image_path, place, destribition, date, id_o))
+
+            mysql.connection.commit()
+            cur.close()
+            return redirect(url_for('Indexadmin'))
+
+        # Récupérer les données actuelles de l'item
+        cur = mysql.connection.cursor()
         cur.execute(
             "SELECT id_o, type, destribition, emplacement, date_p_t, file_path, statu FROM objet_p_t WHERE id_o = %s",
             (id_o,))
@@ -299,101 +352,112 @@ def update(id_o):
 
         return render_template('modifier.html', objet=objet)
 
+    return redirect(url_for('hom'))
 
 # Route : Supprimer un item
+@app.route('/deleteadmin/<int:id_o>', methods=['GET'])
+def deleteadmin(id_o):
+    if 'admin' in session:
+        cur = mysql.connection.cursor()
+        cur.execute("DELETE FROM objet_p_t WHERE id_o=%s", ([id_o]))
+        mysql.connection.commit()
+        return redirect(url_for('Indexadmin'))
+    return redirect(url_for('hom'))
+
 @app.route('/delete/<int:id_o>', methods=['GET'])
 def delete(id_o):
-    id_p = session['user_id']
-    cur = mysql.connection.cursor()
-    cur.execute("SELECT id_p FROM objet_p_t WHERE id_o=%s", ([id_o]))
-    result = cur.fetchone()
-    if result[0] != id_p:
-        return "Vous n'avez pas le droit de suprimer cet article"
-    else:
+    if 'user_id' in session:
+        cur = mysql.connection.cursor()
         cur.execute("DELETE FROM objet_p_t WHERE id_o=%s", ([id_o]))
-    mysql.connection.commit()
-    return redirect(url_for('Index'))
+        mysql.connection.commit()
+        return redirect(url_for('Index'))
+    return redirect(url_for('hom'))
 
-@app.route('/update_profil/<int:id_p>', methods=['GET', 'POST'])
+@app.route('/updateprofil/<int:id_p>', methods=['GET', 'POST'])
 def updateprofil(id_p):
     cur = mysql.connection.cursor()
-
     if request.method == 'POST':
         nom = request.form['nom']
         prenom = request.form['prenom']
         num_tel = request.form['num_tel']
-        cur.execute("""
-                UPDATE person_p_t
-                SET nom = %s,
-                    prenom = %s,
-                    num_tel = %s
-                WHERE id_p = %s
-                """, (nom, prenom, num_tel, id_p))
+        email = request.form['email']
+        adresse = request.form['adresse']
+        password = request.form['password']
 
-        mysql.connection.commit()
-        cur.close()
-        return redirect(url_for('profile'))
+        cur.execute("SELECT mot_passe FROM person_p_t WHERE id_p = %s", (session['user_id'],))
+        mot_passe = cur.fetchone()
 
-    # Récupérer les données actuelles de l'item
-    id_p = session['user_id']
-    cur = mysql.connection.cursor()
-    cur.execute("SELECT id_p FROM person_p_t WHERE id_p=%s", ([id_p]))
-    result = cur.fetchone()
-    if result[0] != id_p:
-        return "Vous n'avez pas le droit de modifier cet article"
-    else:
-        cur.execute(
-            "SELECT nom, prenom, num_tel FROM person_p_t WHERE id_p = %s",
-            (id_p,))
-        person = cur.fetchone()
-        cur.close()
+        if mot_passe and mot_passe[0] == password:
+            cur.execute("""
+                    UPDATE person_p_t
+                    SET nom = %s,
+                        prenom = %s,
+                        num_tel = %s
+                    WHERE id_p = %s
+                    """, (nom, prenom, num_tel, id_p))
+            if email and adresse:
+                cur.execute("""
+                            UPDATE person_p_t
+                            SET mail = %s,
+                                adresse = %s
+                            WHERE id_p = %s
+                            """, (email, adresse, id_p))
 
-        return render_template('modifier_profil.html', person=person)
+            mysql.connection.commit()
+            cur.close()
+            return redirect(url_for('profile'))
+
+    cur.execute("SELECT * FROM person_p_t WHERE id_p = %s", (session['user_id'],))
+    person = cur.fetchone()
+    cur.close()
+    return render_template('modifier_profil.html', person=person)
+
 
 @app.route('/charts')
 def hommm():
-    cur1 = mysql.connection.cursor()
-    cur1.execute("SELECT  COUNT(*) FROM person_p_t where genre = 'Homme'")
-    data1 = cur1.fetchone()
-    cur1.close()
+    if 'admin' in session:
+        cur1 = mysql.connection.cursor()
+        cur1.execute("SELECT  COUNT(*) FROM person_p_t where genre = 'Homme'")
+        data1 = cur1.fetchone()
+        cur1.close()
 
-    cur2 = mysql.connection.cursor()
-    cur2.execute("SELECT  COUNT(*) FROM person_p_t where genre = 'Femme'")
-    data2 = cur2.fetchone()
-    cur2.close()
+        cur2 = mysql.connection.cursor()
+        cur2.execute("SELECT  COUNT(*) FROM person_p_t where genre = 'Femme'")
+        data2 = cur2.fetchone()
+        cur2.close()
 
-    cur3 = mysql.connection.cursor()
-    cur3.execute("SELECT  COUNT(*) FROM objet_p_t where etat = 'active'")
-    data3 = cur3.fetchone()
-    cur3.close()
+        cur3 = mysql.connection.cursor()
+        cur3.execute("SELECT  COUNT(*) FROM objet_p_t where etat = 'active'")
+        data3 = cur3.fetchone()
+        cur3.close()
 
-    cur4 = mysql.connection.cursor()
-    cur4.execute("SELECT  COUNT(*) FROM objet_p_t where etat = 'inactive'")
-    data4 = cur4.fetchone()
-    cur4.close()
+        cur4 = mysql.connection.cursor()
+        cur4.execute("SELECT  COUNT(*) FROM objet_p_t where etat = 'inactive'")
+        data4 = cur4.fetchone()
+        cur4.close()
 
-    cur7 = mysql.connection.cursor()
-    cur7.execute("SELECT  COUNT(*) FROM objet_p_t where statu = 'perdu'")
-    data7 = cur7.fetchone()
-    cur7.close()
+        cur7 = mysql.connection.cursor()
+        cur7.execute("SELECT  COUNT(*) FROM objet_p_t where statu = 'perdu'")
+        data7 = cur7.fetchone()
+        cur7.close()
 
-    cur8 = mysql.connection.cursor()
-    cur8.execute("SELECT  COUNT(*) FROM objet_p_t where statu = 'trouvé'")
-    data8 = cur8.fetchone()
-    cur8.close()
+        cur8 = mysql.connection.cursor()
+        cur8.execute("SELECT  COUNT(*) FROM objet_p_t where statu = 'trouvé'")
+        data8 = cur8.fetchone()
+        cur8.close()
 
-    cur5 = mysql.connection.cursor()
-    cur5.execute("SELECT  COUNT(*) FROM person_p_t")
-    data5 = cur5.fetchone()
-    cur5.close()
+        cur5 = mysql.connection.cursor()
+        cur5.execute("SELECT  COUNT(*) FROM person_p_t")
+        data5 = cur5.fetchone()
+        cur5.close()
 
-    cur6 = mysql.connection.cursor()
-    cur6.execute("SELECT  COUNT(*) FROM objet_p_t")
-    data6 = cur6.fetchone()
-    cur6.close()
+        cur6 = mysql.connection.cursor()
+        cur6.execute("SELECT  COUNT(*) FROM objet_p_t")
+        data6 = cur6.fetchone()
+        cur6.close()
 
 
-    return render_template('charts.html' , Utilisateurs=data5, Hommes=data1, Femmes=data2, objets=data6, actives=data3, inactives=data4, perdus=data7, trouvés=data8)
-
+        return render_template('charts.html' , Utilisateurs=data5, Hommes=data1, Femmes=data2, objets=data6, actives=data3, inactives=data4, perdus=data7, trouvés=data8)
+    return redirect(url_for('hom'))
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000, debug=True)

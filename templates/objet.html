@@ -1,61 +1,262 @@
 <!DOCTYPE html>
-<html lang="fa" >
+<html lang="ar">
+
 <head>
     <meta charset="UTF-8">
-    <title>Les informations de l'objet</title>
+    <title>Ajouter un objet</title>
+     <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- DataTables Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/style_table.css">
+    <link rel="stylesheet" type="text/css" href="/static/new.css">
+<style>
+        /* General Styles */
+        body {
+            font-family: 'Nunito', sans-serif;
+            margin: 0;
+            background: linear-gradient(to bottom, #008080, #40e0d0);
+            color: #333;
+        }
 
-    <link rel ="stylesheet" type="text/css"
-      href="{{ url_for('static', filename='style.css') }}">
+        /* Sidebar Styles */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -250px;
+            width: 250px;
+            height: 100%;
+            background: #004d4d;
+            color: white;
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            transition: left 0.3s ease;
+            z-index: 1000;
+        }
 
+        .sidebar.active {
+            left: 0;
+        }
 
+        .sidebar h2 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar ul li {
+            margin: 15px 0;
+        }
+
+        .sidebar ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            display: block;
+            padding: 10px;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+
+        .sidebar ul li a:hover {
+            background: #006666;
+        }
+
+        /* Content Styles */
+        .content {
+            margin-left: 0;
+            padding: 20px;
+            transition: margin-left 0.3s ease;
+        }
+
+        .content.shifted {
+            margin-left: 250px;
+        }
+
+        /* Header Styles */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .menu-btn {
+            font-size: 24px;
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+        }
+
+        /* Search Bar */
+        .search-bar {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .search-bar input {
+            width: 100%;
+            max-width: 600px;
+            padding: 10px;
+            border: none;
+            border-radius: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            font-size: 16px;
+        }
+    </style>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            margin: 0;
+            background: linear-gradient(to bottom, #008080, #40e0d0);
+            color: #333;
+            padding: 20px;
+        }
+
+        .form-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            max-width: 600px;
+            margin: 30px auto;
+        }
+
+        .form-card h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #008080;
+        }
+
+        .form-card label {
+            font-weight: bold;
+            color: #006666;
+        }
+
+        .form-card input,
+        .form-card textarea,
+        .form-card select {
+            width: 100%;
+            padding: 8px 10px;
+            margin: 5px 0 15px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .form-card button {
+            width: 100%;
+            background-color: #008080;
+            color: white;
+            border: none;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .form-card button:hover {
+            background-color: #006666;
+        }
+    </style>
 </head>
+
 <body>
-    <div class="login-container">
-        <form id="objet-form" action="{{ url_for('inserte') }}" method="POST" enctype="multipart/form-data">
-            <fieldset>
-                <legend><h4>Les informations de l'objet</h4></legend>
-                <p>
-                <label>Type :</label><br>
-                <input type="text" id="type" name="type" placeholder="Type : animal, voiture...">
-            </p>
-            <p class="form-group">
-                <label>Distribition :</label><br>
-                <textarea id="destribition" name="destribition"></textarea>
-            </p>
-            <p class="form-group">
-                <label>Emplacement :</label><br>
-                <textarea id="place" name="place"></textarea>
-            </p>
-                <p class="form-group">
-                <select name="statu" >
-                    <option value="null">Choisissez le statut</option>
-                    <option value="Perdu">Perdu</option>
-                    <option value="Trouvé">Trouvé</option>
-                </select>
-            </p>
-                <p class="form-group">
-                <label>Date :</label><br>
-                <input type="date" id="date" name="date" placeholder="Date">
-            </p>
-            <p>
-                <label>Photo (s'elle existe) :</label><br>
-                <input type="file" id="photo" name="file" accept="image/*">
-            </p>
-            <p>
+    <div class="sidebar" id="sidebar">
+            <h2>Menu</h2>
+            <ul>
+                <li><a href="{{ url_for('Index') }}"><i class="fas fa-home"></i> Page général</a></li>
+            </ul>
+
+
+        </div>
+    <div class="content" id="content">
+            <div class="header">
+                <button class="menu-btn" id="menu-btn">&#9776;</button>
+            </div>
+        <div class="form-card">
+
+                <!-- Header with Hamburger Menu -->
+            <h1>Ajouter un objet</h1>
+            <form id="objet-form" action="/inserte" method="POST" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="type">Type :</label>
+                    <input type="text" id="type" name="type" placeholder="Type : animal, voiture..." required>
+                </div>
+                <div class="mb-3">
+                    <label for="destribition">Distribution :</label>
+                    <textarea id="destribition" name="destribition" placeholder="Description" required></textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="place">Emplacement :</label>
+                    <textarea id="place" name="place" placeholder="Place" required></textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="statu">Statut :</label>
+                    <select id="statu" name="statu" required>
+                        <option value="">Choisissez le statut</option>
+                        <option value="Perdu">Perdu</option>
+                        <option value="Trouvé">Trouvé</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="date">Date :</label>
+                    <input type="date" id="date" name="date" required>
+                </div>
+                <div class="mb-3">
+                    <label for="photo">Photo (si elle existe) :</label>
+                    <input type="file" id="photo" name="file" accept="image/*">
+                </div>
                 <input type="hidden" id="user_id" name="user_id" value="{{ session['user_id'] }}">
-            </p>
-            <p>
                 <input type="hidden" id="etat" name="etat" value="inactive">
-            </p>
-            <p class="form-group">
-                <button type="submit">Envoyer</button>
-            </p>
-            <p class="form-group">
-            </p>
-            </fieldset>
+                <div class="text-center">
+                    <button type="submit">Envoyer</button>
+                </div>
         </form>
     </div>
-<script type="text/javascript"
-        src="{{ url_for('static', filename='objet.js') }}"></script>
+    </div>
+<script>
+    // Toggle Sidebar
+    document.getElementById("menu-btn").addEventListener("click", function () {
+        const sidebar = document.getElementById("sidebar");
+        const content = document.getElementById("content");
+
+        sidebar.classList.toggle("active");
+        content.classList.toggle("shifted");
+    });
+</script>
 </body>
+
 </html>
