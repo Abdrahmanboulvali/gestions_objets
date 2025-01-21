@@ -198,7 +198,6 @@ def insert():
             return "لديك حساب بالفعل، يمكنك تسجيل الدخول"  # Account already exists
         else:
             # Call the envoyer_otp function to send OTP
-            otp_response, status_code = envoyer_otp()
             return render_template('otp.html', message=otp_response)
 
 
