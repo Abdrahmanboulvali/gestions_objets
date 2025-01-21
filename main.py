@@ -4,7 +4,6 @@ import random
 from flask import Flask, request, render_template, redirect, url_for, session
 from flask_cors import CORS
 from flask_mysqldb import MySQL
-from twilio.rest import Client
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
