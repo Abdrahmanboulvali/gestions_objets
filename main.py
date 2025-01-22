@@ -338,9 +338,9 @@ def updateadmin(id_o):
                         WHERE id_o = %s
                     """, (type, statu, image_path, place, destribition, date, id_o))
 
-            mysql.connection.commit()
-            cur.close()
-            return redirect(url_for('Indexadmin'))
+                mysql.connection.commit()
+                cur.close()
+                return redirect(url_for('Indexadmin'))
 
         # Récupérer les données actuelles de l'item
         cur = mysql.connection.cursor()
@@ -350,7 +350,7 @@ def updateadmin(id_o):
         objet = cur.fetchone()
         cur.close()
 
-        return render_template('modifier.html', objet=objet)
+        return render_template('modifier_admin.html', objet=objet)
 
     return redirect(url_for('hom'))
 

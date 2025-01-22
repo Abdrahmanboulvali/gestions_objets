@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="fa">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Informations de l'objet</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- DataTables Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/style_table.css">
+    <link rel="stylesheet" type="text/css" href="/static/new.css">
+<style>
+        /* General Styles */
+        body {
+            font-family: 'Nunito', sans-serif;
+            margin: 0;
+            background: linear-gradient(to bottom, #008080, #40e0d0);
+            color: #333;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -250px;
+            width: 250px;
+            height: 100%;
+            background: #004d4d;
+            color: white;
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            transition: left 0.3s ease;
+            z-index: 1000;
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .sidebar h2 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar ul li {
+            margin: 15px 0;
+        }
+
+        .sidebar ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            display: block;
+            padding: 10px;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+
+        .sidebar ul li a:hover {
+            background: #006666;
+        }
+
+        /* Content Styles */
+        .content {
+            margin-left: 0;
+            padding: 20px;
+            transition: margin-left 0.3s ease;
+        }
+
+        .content.shifted {
+            margin-left: 250px;
+        }
+
+        /* Header Styles */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .menu-btn {
+            font-size: 24px;
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+        }
+
+        /* Search Bar */
+        .search-bar {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .search-bar input {
+            width: 100%;
+            max-width: 600px;
+            padding: 10px;
+            border: none;
+            border-radius: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            font-size: 16px;
+        }
+    </style>
+</head>
+
+<body>
+<div>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <h2>Menu</h2>
+        <ul>
+            <li><a href="{{ url_for('Indexadmin') }}"><i class="fas fa-home"></i> Page général</a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content" id="content">
+    <div class="header">
+                <button class="menu-btn" id="menu-btn">&#9776;</button>
+                <h1>Liste des objets</h1>
+            </div>
+
+
+        <!-- Form Section -->
+        <div class="table-container">
+            <form method="post" enctype="multipart/form-data">
+                <table class="form-table">
+                    <tr>
+                        <td><label for="type">Type :</label></td>
+                        <td><input type="text" id="type" name="type" value="{{ objet[1] }}"></td>
+                    </tr>
+                    <tr>
+                        <td><label for="destribition">Description :</label></td>
+                        <td><input id="destribition" name="destribition" value="{{ objet[2] }}"></td>
+                    </tr>
+                    <tr>
+                        <td><label for="place">Emplacement :</label></td>
+                        <td><input id="place" name="place" value="{{ objet[3] }}"></td>
+                    </tr>
+                    <tr>
+                        <td><label for="date">Date :</label></td>
+                        <td><input type="date" id="date" name="date" value="{{ objet[4] }}"></td>
+                    </tr>
+                    <tr>
+                        <td><label for="statu">Statut :</label></td>
+                        <td>
+                            <select name="statu" id="statu">
+                                {% if objet[6] == 'Perdu' %}
+                                    <option value="Perdu" selected>Perdu</option>
+                                {% endif %}
+                                {% if objet[6] == 'Trouvé' %}
+                                    <option value="Trouvé" selected>Trouvé</option>
+                                {% endif %}
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Photo actuelle :</td>
+                        <td>
+                            {% if objet[5] %}
+                            <img src="{{ url_for('static', filename=objet[5].replace('static/', '')) }}" alt="Image de {{ objet[1] }}" class="img-fluid" style="max-width: 100%; max-height: 200px;">
+                            {% else %}
+                            <p>Aucune image disponible</p>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="photo">Changer l'image :</label></td>
+                        <td><input type="file" id="photo" name="file" accept="image/*"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="text-align: center;">
+                            <input type="hidden" id="user_id" name="user_id" value="{{ session['user_id'] }}">
+                            <input type="hidden" id="id_o" name="id_o" value="{{ objet[0] }}">
+                            <button type="submit">Envoyer</button>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("menu-btn").addEventListener("click", function () {
+            document.getElementById("sidebar").classList.toggle("active");
+            document.getElementById("content").classList.toggle("shifted");
+        });
+    </script>
+</div>
+</body>
+
+</html>
