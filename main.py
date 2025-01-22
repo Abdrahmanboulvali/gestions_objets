@@ -4,11 +4,18 @@ import random
 from flask import Flask, request, render_template, redirect, url_for, session
 from flask_cors import CORS
 from flask_mysqldb import MySQL
+from twilio.rest import Client
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 CORS(app)  # Autorise toutes les origines
 
+account_sid = "ACa95ab4e41f99b202e1b1f0819d9b3771"
+auth_token = "0ef7113d41987ab32821a42c1e187bb4"
+twilio_phone_number = "+15673443856"  # Corrected format
+app.secret_key ="abderrahmane"
+
+client = Client(account_sid, auth_token)
 
 #this is a comment 
 app.config['MYSQL_HOST'] = 'localhost'
@@ -22,6 +29,31 @@ mysql = MySQL(app)
 # Configuration pour le téléchargement des fichiers
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+def envoyer_otp():
+    num_tel = session.get('tel')
+    if not num_tel:
+        return "Entrez votre numéro de téléphone SVP", 400
+
+    if not num_tel.startswith('+'):
+        num_tel = f"+222{num_tel}"
+
+    if not num_tel[1:].isdigit():
+        return "Le numéro de téléphone doit inclure l'indicatif du pays (ex: +222) et être valide", 400
+
+    otp = random.randint(100000, 999999)
+    session['otp'] = otp
+
+    try:
+        message = client.messages.create(
+            body=f"Votre code de verification est : {otp}",
+            from_=twilio_phone_number,
+            to=num_tel
+        )
+
+        return f"Le code de verification a été envoyé avec succès: {otp}", 200
+    except Exception as e:
+        return f"Echec de l'envoi du code de vérification : {str(e)}", 500
 
 
 @app.route('/verification_otp', methods=['POST'])
@@ -198,6 +230,7 @@ def insert():
             return "لديك حساب بالفعل، يمكنك تسجيل الدخول"  # Account already exists
         else:
             # Call the envoyer_otp function to send OTP
+            otp_response, status_code = envoyer_otp()
             return render_template('otp.html', message=otp_response)
 
 
@@ -342,42 +375,41 @@ def delete(id_o):
 
 @app.route('/updateprofil/<int:id_p>', methods=['GET', 'POST'])
 def updateprofil(id_p):
-    cur = mysql.connection.cursor()
-    if request.method == 'POST':
-        nom = request.form['nom']
-        prenom = request.form['prenom']
-        num_tel = request.form['num_tel']
-        email = request.form['email']
-        adresse = request.form['adresse']
-        password = request.form['password']
-
-        cur.execute("SELECT mot_passe FROM person_p_t WHERE id_p = %s", (session['user_id'],))
-        mot_passe = cur.fetchone()
-
-        if mot_passe and mot_passe[0] == password:
-            cur.execute("""
-                    UPDATE person_p_t
-                    SET nom = %s,
-                        prenom = %s,
-                        num_tel = %s
-                    WHERE id_p = %s
-                    """, (nom, prenom, num_tel, id_p))
-            if email and adresse:
+    if 'user_id' in session:
+        cur = mysql.connection.cursor()
+        if request.method == 'POST':
+            nom = request.form['nom']
+            prenom = request.form['prenom']
+            num_tel = request.form['num_tel']
+            email = request.form['email']
+            adresse = request.form['adresse']
+            password = request.form['password']
+            cur.execute("SELECT * FROM person_p_t WHERE id_p = %s", [id_p])
+            person = cur.fetchone()
+            if password and password == person[4]:
                 cur.execute("""
-                            UPDATE person_p_t
-                            SET mail = %s,
-                                adresse = %s
-                            WHERE id_p = %s
-                            """, (email, adresse, id_p))
+                        UPDATE person_p_t
+                        SET nom = %s,
+                            prenom = %s,
+                            num_tel = %s,
+                            mail = %s,
+                            adress = %s
+                        WHERE id_p = %s
+                    """, (nom, prenom, num_tel, email, adresse, id_p))
 
-            mysql.connection.commit()
-            cur.close()
-            return redirect(url_for('profile'))
 
-    cur.execute("SELECT * FROM person_p_t WHERE id_p = %s", (session['user_id'],))
-    person = cur.fetchone()
-    cur.close()
-    return render_template('modifier_profil.html', person=person)
+                mysql.connection.commit()
+                cur.close()
+                return redirect(url_for('profile'))
+
+        cur.execute(
+            "SELECT * FROM person_p_t WHERE id_p = %s",
+            (id_p,))
+        person = cur.fetchone()
+        cur.close()
+
+        return render_template('modifier_profil.html', person=person)
+    return redirect(url_for('hom'))
 
 
 @app.route('/charts')
