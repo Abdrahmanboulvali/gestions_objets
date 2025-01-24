@@ -170,13 +170,10 @@
                         <td><label for="statu">Statut :</label></td>
                         <td>
                             <select name="statu" id="statu">
-                                {% if objet[8] == 'Perdu' %}
-                                    <option value="Perdu" selected>Perdu</option>
-                                {% endif %}
-                                {% if objet[8] == 'Trouvé' %}
-                                    <option value="Trouvé" selected>Trouvé</option>
-                                {% endif %}
+                                <option value="Perdu" {% if objet[8] =='Perdu' %}selected{% endif %}>Perdu</option>
+                                <option value="Trouvé" {% if objet[8] =='Trouvé' %}selected{% endif %}>Trouvé</option>
                             </select>
+
                         </td>
                     </tr>
                     <tr>

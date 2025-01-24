@@ -169,19 +169,15 @@
                         <td><label for="statu">Statut :</label></td>
                         <td>
                             <select name="statu" id="statu">
-                                {% if objet[8] == 'Perdu' %}
-                                    <option value="Perdu" selected>Perdu</option>
-                                {% endif %}
-                                {% if objet[8] == 'Trouvé' %}
-                                    <option value="Trouvé" selected>Trouvé</option>
-                                {% endif %}
+                                <option value="Perdu" {% if objet[8] =='Perdu' %}selected{% endif %}>Perdu</option>
+                                <option value="Trouvé" {% if objet[8] =='Trouvé' %}selected{% endif %}>Trouvé</option>
                             </select>
                         </td>
                     </tr>
                     <tr>
                         <td>Photo actuelle :</td>
                         <td>
-                            {% if objet[5] and objet[6] objet[7] %}
+                            {% if objet[5] %}
                             <img src="{{ url_for('static', filename=objet[5].replace('static/', '')) }}" alt="Image de {{ objet[1] }}" class="img-fluid" style="max-width: 100%; max-height: 200px;"><br><img src="{{ url_for('static', filename=objet[6].replace('static/', '')) }}" alt="Image de {{ objet[1] }}" class="img-fluid" style="max-width: 100%; max-height: 200px;"><br><img src="{{ url_for('static', filename=objet[7].replace('static/', '')) }}" alt="Image de {{ objet[1] }}" class="img-fluid" style="max-width: 100%; max-height: 200px;">
                             {% else %}
                             <p>Aucune image disponible</p>

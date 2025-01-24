@@ -170,13 +170,10 @@
                         <td><label for="statu">Statut :</label></td>
                         <td>
                             <select name="statu" id="statu">
-                                {% if objetadmin[2] == 'Perdu' %}
-                                    <option value="Perdu" selected>Perdu</option>
-                                    <option value="Trouvé" selected>Trouvé</option>
-                                {% else %}
-                                    <option value="Trouvé" selected>Trouvé</option>
-                                    <option value="Perdu" selected>Perdu</option>
-                                {% endif %}
+                                <select name="statu" id="statu">
+                                <option value="Perdu" {% if objetadmin[2] =='Perdu' %}selected{% endif %}>Perdu</option>
+                                <option value="Trouvé" {% if objetadmin[8] =='Trouvé' %}selected{% endif %}>Trouvé</option>
+                            </select>
                             </select>
                         </td>
                     </tr>
