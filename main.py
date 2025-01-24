@@ -51,7 +51,7 @@ def envoyer_otp():
             to=num_tel
         )
 
-        return f"Le code de verification a été envoyé avec succès: {otp}", 200
+        return f"Le code de verification a été envoyé avec succès", 200
     except Exception as e:
         return f"Echec de l'envoi du code de vérification : {str(e)}", 500
 
@@ -65,14 +65,16 @@ def verification_otp():
         genre = session['genre']
         password = session['password']
         code_otp = request.form['otp']
+        email = session['email']
+        adress = session['adress']
 
         if not code_otp or not tel:
             return "Veuillez saisir le code de vérification et le numéro de téléphone", 400
         else:
             if int(code_otp) == session['otp']:
                 cur = mysql.connection.cursor()
-                cur.execute("INSERT INTO person_p_t (nom, prenom,genre, num_tel,mot_passe) "
-                            "VALUES (%s, %s, %s, %s, %s)", (nom, prenom,genre, tel, password))
+                cur.execute("INSERT INTO person_p_t (nom, prenom,genre, num_tel,mot_passe,mail, adress) "
+                            "VALUES (%s, %s, %s, %s, %s, %s, %s)", (nom, prenom,genre, tel, password, email, adress))
                 mysql.connection.commit()
                 return redirect(url_for('hom'))
             else:
@@ -180,6 +182,19 @@ def Indexadmin():
         cur.close()
         return render_template('all_pub.html', objets_admin=data)
     return redirect(url_for('hom'))
+
+@app.route('/hutile')
+def Indexutile():
+    if 'user_id' in session:
+        id_p = session['user_id']
+        cur = mysql.connection.cursor()
+        cur.execute(
+            "SELECT  * FROM objet_p_t, person_p_t where person_p_t.id_p=objet_p_t.id_p and objet_p_t.id_p = %s", (id_p,))
+        data = cur.fetchall()
+        cur.close()
+        return render_template('objs_utl.html', objs_utl=data)
+    return redirect(url_for('hom'))
+
 @app.route('/home')
 def home():
     cur = mysql.connection.cursor()
@@ -220,6 +235,8 @@ def insert():
         session['genre'] = request.form.get('gender')
         session['tel'] = request.form['tel']
         session['password'] = request.form['password']
+        session['email'] = request.form['email']
+        session['adress'] = request.form['adress']
 
         # Check if the phone number already exists in the database
         cur = mysql.connection.cursor()
@@ -227,7 +244,7 @@ def insert():
         N_tel = cur.fetchone()
 
         if N_tel:
-            return "لديك حساب بالفعل، يمكنك تسجيل الدخول"  # Account already exists
+            return "Vous avez déja une compte"  # Account already exists
         else:
             # Call the envoyer_otp function to send OTP
             otp_response, status_code = envoyer_otp()
@@ -309,6 +326,47 @@ def update(id_o):
         return render_template('modifier.html', objet=objet)
     return redirect(url_for('hom'))
 
+@app.route('/updateutl/<int:id_o>', methods=['GET', 'POST'])
+def updateutl(id_o):
+    if 'user_id' in session:
+        cur = mysql.connection.cursor()
+        if request.method == 'POST':
+            type = request.form['type']
+            statu = request.form['statu']
+            place = request.form['place']
+            destribition = request.form['destribition']
+            date = request.form['date']
+            file = request.files['file']
+            # Gérer le téléchargement de l'image si elle est fournie
+            if file and allowed_file(file.filename):
+                filename = secure_filename(file.filename)
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                image_path = f"{UPLOAD_FOLDER}/{filename}"
+                # Mettre à jour avec une nouvelle image
+                cur.execute("""
+                        UPDATE objet_p_t
+                        SET type = %s,
+                            statu = %s,
+                            file_path = %s,
+                            emplacement = %s,
+                            destribition = %s,
+                            date_p_t = %s
+                        WHERE id_o = %s
+                    """, (type, statu, image_path, place, destribition, date, id_o))
+
+            mysql.connection.commit()
+            cur.close()
+            return redirect(url_for('Index'))
+
+        cur.execute(
+            "SELECT id_o, type, destribition, emplacement, date_p_t, file_path, statu FROM objet_p_t WHERE id_o = %s",
+            (id_o,))
+        objet = cur.fetchone()
+        cur.close()
+
+        return render_template('modifier_utl.html', objet=objet)
+    return redirect(url_for('hom'))
+
 @app.route('/updateadmin/<int:id_o>', methods=['GET', 'POST'])
 def updateadmin(id_o):
     if 'admin' in session:
@@ -338,19 +396,19 @@ def updateadmin(id_o):
                         WHERE id_o = %s
                     """, (type, statu, image_path, place, destribition, date, id_o))
 
-                mysql.connection.commit()
-                cur.close()
-                return redirect(url_for('Indexadmin'))
+            mysql.connection.commit()
+            cur.close()
+            return redirect(url_for('Indexadmin'))
 
         # Récupérer les données actuelles de l'item
         cur = mysql.connection.cursor()
         cur.execute(
-            "SELECT id_o, type, destribition, emplacement, date_p_t, file_path, statu FROM objet_p_t WHERE id_o = %s",
+            "SELECT * FROM objet_p_t WHERE id_o = %s",
             (id_o,))
-        objet = cur.fetchone()
+        objetadmin = cur.fetchone()
         cur.close()
 
-        return render_template('modifier_admin.html', objet=objet)
+        return render_template('modifier_admin.html', objetadmin=objetadmin)
 
     return redirect(url_for('hom'))
 
@@ -371,6 +429,15 @@ def delete(id_o):
         cur.execute("DELETE FROM objet_p_t WHERE id_o=%s", ([id_o]))
         mysql.connection.commit()
         return redirect(url_for('Index'))
+    return redirect(url_for('hom'))
+
+@app.route('/deleteutl/<int:id_o>', methods=['GET'])
+def deleteutl(id_o):
+    if 'user_id' in session:
+        cur = mysql.connection.cursor()
+        cur.execute("DELETE FROM objet_p_t WHERE id_o=%s", ([id_o]))
+        mysql.connection.commit()
+        return redirect(url_for('Indexutile'))
     return redirect(url_for('hom'))
 
 @app.route('/updateprofil/<int:id_p>', methods=['GET', 'POST'])

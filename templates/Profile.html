@@ -128,7 +128,8 @@
     <div class="sidebar" id="sidebar">
         <ul>
             <li><a href="{{ url_for('Index') }}"><i class="fas fa-home"></i> Page général</a></li>
-            <li><a href="/updateprofil/{{ person.0 }}"><i class="fas fa-pencil-alt"></i> Modifier le profil</a></li>
+            <li><a href="{{ url_for('Indexutile') }}"><i class="fas fa-briefcase"></i> Mes objets</a></li>
+            <li><a href="/updateprofil/{{ person.0 }}"><i class="fas fa-cog"></i> Modifier le profil</a></li>
         </ul>
     </div>
 

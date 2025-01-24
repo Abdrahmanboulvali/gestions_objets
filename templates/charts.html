@@ -8,9 +8,8 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-
     <title>Gestion des objets perdus</title>
- <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style_table.css') }}">
@@ -122,15 +121,28 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             font-size: 16px;
         }
+
+        /* Styles for Cards */
+        .card {
+            background-color: #fff !important; /* خلفية بيضاء */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* ظل خفيف */
+            border: none; /* إزالة الحدود */
+        }
+
+        .card-header {
+            background-color: #f8f9fc; /* لون خفيف للرأس */
+            border-bottom: 1px solid #e3e6f0;
+        }
     </style>
+
+
     <!-- DataTable CSS -->
-<link href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" rel="stylesheet">
 
-<!-- DataTable JavaScript -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
-
+    <!-- DataTable JavaScript -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
 
     <!-- Include Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -152,51 +164,47 @@
         <div class="content" id="content">
             <!-- Header with Hamburger Menu -->
             <div class="header">
-                <button class="menu-btn" id="menu-btn">&#9776;</button>
+                <a href="{{ url_for('Indexadmin') }}" class="menu-btn" id="menu-btn"><i class="fas fa-arrow-left"></i></a>
                 <h1>Liste des objets</h1>
             </div>
 
-        <!-- Content Wrapper -->
-        <div id="content-wrapper" class="d-flex flex-column">
+            <!-- Content Wrapper -->
+            <div id="content-wrapper" class="d-flex flex-column">
+                <!-- Main Content -->
+                <div id="content">
+                    <div class="container-fluid">
+                        <!-- Row for Statistics -->
+                        <div class="row">
+                            <!-- Cards for statistics (already implemented) -->
+                        </div>
 
-            <!-- Main Content -->
-            <div id="content">
-
-                <!-- End of Topbar -->
-
-                <div class="container-fluid">
-
-                    <!-- Row for Statistics -->
-                    <div class="row">
-                        <!-- Cards for statistics (already implemented) -->
-                    </div>
-
-                    <!-- Row for Graphical Representations -->
-                    <div class="row">
-
-                        <!-- Chart: Gender Distribution -->
-                        <div class="col-xl-6 col-lg-6">
-                            <div class="card shadow mb-4">
-                                <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary">Répartition par sexe</h6>
+                        <!-- Row for Graphical Representations -->
+                        <div class="row">
+                            <div class="col-xl-6 col-lg-6">
+                                <div class="card shadow mb-4">
+                                    <div class="card-header py-3">
+                                        <h6 class="m-0 font-weight-bold text-primary">Répartition par sexe</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <canvas id="genderChart"></canvas>
+                                    </div>
                                 </div>
-                                <div class="card-body">
-                                    <canvas id="genderChart"></canvas>
+                            </div>
+
+                            <div class="col-xl-6 col-lg-6">
+                                <div class="card shadow mb-4">
+                                    <div class="card-header py-3">
+                                        <h6 class="m-0 font-weight-bold text-success">Diffusion de publicités</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <canvas id="adsDistributionChart"></canvas>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Chart: Ads Distribution -->
-                        <div class="col-xl-6 col-lg-6">
-                            <div class="card shadow mb-4">
-                                <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-success">Diffusion de publicités</h6>
-                                </div>
-                                <div class="card-body">
-                                    <canvas id="adsDistributionChart"></canvas>
-                                </div>
-                            </div>
-                            <div class="row">
+                        <!-- Row for Perdu/Trouvé Chart -->
+                        <div class="row">
                             <div class="col-xl-12 col-lg-12">
                                 <div class="card shadow mb-4">
                                     <div class="card-header py-3">
@@ -207,24 +215,17 @@
                                     </div>
                                 </div>
                             </div>
-                    </div>
                         </div>
-                        <!-- Row for Perdu/Trouvé Chart -->
                     </div>
-
+                    <!-- /.container-fluid -->
                 </div>
-                <!-- /.container-fluid -->
-
+                <!-- End of Main Content -->
             </div>
-            <!-- End of Main Content -->
-
+            <!-- End of Content Wrapper -->
         </div>
-        <!-- End of Content Wrapper -->
+        <!-- End of Page Wrapper -->
 
-    </div>
-    <!-- End of Page Wrapper -->
-
-    <script>
+        <script>
         const hommes = {{ Hommes[0] }};
         const femmes = {{ Femmes[0] }};
         const actives = {{ actives[0] }};
@@ -346,6 +347,7 @@
         }
 
     </script>
+
     </div>
 </body>
 

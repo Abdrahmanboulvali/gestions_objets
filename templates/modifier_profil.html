@@ -130,7 +130,7 @@
 
     <!-- Header -->
     <div class="header">
-        <button class="menu-btn" id="menu-btn">&#9776;</button>
+        <a href="{{ url_for('profile') }}" class="menu-btn" id="menu-btn"><i class="fas fa-arrow-left"></i></a>
     </div>
 
     <!-- Profile Form in a Card -->
@@ -160,7 +160,7 @@
                 </p>
                 <p class="form-group">
                     <label for="password">Mot de passe (pour confirmer) :</label><br>
-                    <input id="password" name="password" placeholder="Entez votre mot de passe" required>
+                    <input type="password" id="password" name="password" placeholder="Entez votre mot de passe" required>
                 </p>
                 <p class="form-group">
                     <button type="submit">Envoyer</button>

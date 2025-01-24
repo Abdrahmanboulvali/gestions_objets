@@ -134,14 +134,14 @@
     <div class="sidebar" id="sidebar">
         <h2>Menu</h2>
         <ul>
-            <li><a href="{{ url_for('Indexadmin') }}"><i class="fas fa-home"></i> Page général</a></li>
+            <li><a href="{{ url_for('Index') }}"><i class="fas fa-home"></i> Page général</a></li>
         </ul>
     </div>
 
     <!-- Main Content -->
     <div class="content" id="content">
     <div class="header">
-                <a href="{{ url_for('Indexadmin') }}" class="menu-btn" id="menu-btn"><i class="fas fa-arrow-left"></i></a>
+                <a href="{{ url_for('Indexutile') }}" class="menu-btn" id="menu-btn"><i class="fas fa-arrow-left"></i></a>
                 <h1>Liste des objets</h1>
             </div>
 
@@ -152,30 +152,29 @@
                 <table class="form-table">
                     <tr>
                         <td><label for="type">Type :</label></td>
-                        <td><input type="text" id="type" name="type" value="{{ objetadmin[1] }}"></td>
+                        <td><input type="text" id="type" name="type" value="{{ objet[1] }}"></td>
                     </tr>
                     <tr>
                         <td><label for="destribition">Description :</label></td>
-                        <td><input id="destribition" name="destribition" value="{{ objetadmin[5] }}"></td>
+                        <td><input id="destribition" name="destribition" value="{{ objet[2] }}"></td>
                     </tr>
                     <tr>
                         <td><label for="place">Emplacement :</label></td>
-                        <td><input id="place" name="place" value="{{ objetadmin[3] }}"></td>
+                        <td><input id="place" name="place" value="{{ objet[3] }}"></td>
                     </tr>
                     <tr>
                         <td><label for="date">Date :</label></td>
-                        <td><input type="date" id="date" name="date" value="{{ objetadmin[4] }}"></td>
+                        <td><input type="date" id="date" name="date" value="{{ objet[4] }}"></td>
                     </tr>
                     <tr>
                         <td><label for="statu">Statut :</label></td>
                         <td>
                             <select name="statu" id="statu">
-                                {% if objetadmin[2] == 'Perdu' %}
+                                {% if objet[6] == 'Perdu' %}
                                     <option value="Perdu" selected>Perdu</option>
+                                {% endif %}
+                                {% if objet[6] == 'Trouvé' %}
                                     <option value="Trouvé" selected>Trouvé</option>
-                                {% else %}
-                                    <option value="Trouvé" selected>Trouvé</option>
-                                    <option value="Perdu" selected>Perdu</option>
                                 {% endif %}
                             </select>
                         </td>
@@ -183,8 +182,8 @@
                     <tr>
                         <td>Photo actuelle :</td>
                         <td>
-                            {% if objetadmin[7] %}
-                            <img src="{{ url_for('static', filename=objetadmin[7].replace('static/', '')) }}" alt="Image de {{ objetadmin[1] }}" class="img-fluid" style="max-width: 100%; max-height: 200px;">
+                            {% if objet[5] %}
+                            <img src="{{ url_for('static', filename=objet[5].replace('static/', '')) }}" alt="Image de {{ objet[1] }}" class="img-fluid" style="max-width: 100%; max-height: 200px;">
                             {% else %}
                             <p>Aucune image disponible</p>
                             {% endif %}
@@ -197,7 +196,7 @@
                     <tr>
                         <td colspan="2" style="text-align: center;">
                             <input type="hidden" id="user_id" name="user_id" value="{{ session['user_id'] }}">
-                            <input type="hidden" id="id_o" name="id_o" value="{{ objetadmin[0] }}">
+                            <input type="hidden" id="id_o" name="id_o" value="{{ objet[0] }}">
                             <button type="submit">Envoyer</button>
                         </td>
                     </tr>
