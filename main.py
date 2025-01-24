@@ -304,14 +304,18 @@ def update(id_o):
                 # Mettre à jour avec une nouvelle image
                 cur.execute("""
                         UPDATE objet_p_t
+                        SET file_path = %s
+                        WHERE id_o = %s
+                    """, (image_path, id_o)),
+            cur.execute("""
+                        UPDATE objet_p_t
                         SET type = %s,
                             statu = %s,
-                            file_path = %s,
                             emplacement = %s,
                             destribition = %s,
                             date_p_t = %s
                         WHERE id_o = %s
-                    """, (type, statu, image_path, place, destribition, date, id_o))
+                    """, (type, statu, place, destribition, date, id_o))
 
             mysql.connection.commit()
             cur.close()
@@ -345,18 +349,22 @@ def updateutl(id_o):
                 # Mettre à jour avec une nouvelle image
                 cur.execute("""
                         UPDATE objet_p_t
+                        SET file_path = %s
+                        WHERE id_o = %s
+                    """, (image_path, id_o)),
+            cur.execute("""
+                        UPDATE objet_p_t
                         SET type = %s,
                             statu = %s,
-                            file_path = %s,
                             emplacement = %s,
                             destribition = %s,
                             date_p_t = %s
                         WHERE id_o = %s
-                    """, (type, statu, image_path, place, destribition, date, id_o))
+                    """, (type, statu, place, destribition, date, id_o))
 
             mysql.connection.commit()
             cur.close()
-            return redirect(url_for('Index'))
+            return redirect(url_for('Indexutile'))
 
         cur.execute(
             "SELECT id_o, type, destribition, emplacement, date_p_t, file_path, statu FROM objet_p_t WHERE id_o = %s",
@@ -387,14 +395,18 @@ def updateadmin(id_o):
                 # Mettre à jour avec une nouvelle image
                 cur.execute("""
                         UPDATE objet_p_t
+                        SET file_path = %s
+                        WHERE id_o = %s
+                    """, (image_path, id_o)),
+            cur.execute("""
+                        UPDATE objet_p_t
                         SET type = %s,
                             statu = %s,
-                            file_path = %s,
                             emplacement = %s,
                             destribition = %s,
                             date_p_t = %s
                         WHERE id_o = %s
-                    """, (type, statu, image_path, place, destribition, date, id_o))
+                    """, (type, statu, place, destribition, date, id_o))
 
             mysql.connection.commit()
             cur.close()
