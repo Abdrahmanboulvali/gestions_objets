@@ -266,18 +266,48 @@ def inserte():
             date = request.form['date']
             etat = request.form['etat']
             id_p = session['user_id']
-            file = request.files['file']
-            file_path = None
-            if file and file.filename != '':
-                # Sécuriser le nom de fichier et l'enregistrer
-                filename = secure_filename(file.filename)
-                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-                file_path = f"{UPLOAD_FOLDER}/{filename}"
+            file1 = request.files['file1']
+            file2 = request.files['file2']
+            file3 = request.files['file3']
+            file_path1 = None
+            file_path2 = None
+            file_path3 = None
+            # Gérer le téléchargement de l'image si elle est fournie
+            if file1 and allowed_file(file1.filename):
+                filename = secure_filename(file1.filename)
+                file1.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                image_path1 = f"{UPLOAD_FOLDER}/{filename}"
+                cur = mysql.connection.cursor()
+                cur.execute(
+                    "INSERT INTO objet_p_t.file_path = %s)",
+                    (file_path1,))
+                mysql.connection.commit()
+                cur.close()
+            elif file2 and allowed_file(file2.filename):
+                filename = secure_filename(file2.filename)
+                file2.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                image_path2 = f"{UPLOAD_FOLDER}/{filename}"
+                cur = mysql.connection.cursor()
+                cur.execute(
+                    "INSERT INTO objet_p_t.file_path1 = %s",
+                    (file_path2,))
+                mysql.connection.commit()
+                cur.close()
+            elif file3 and allowed_file(file3.filename):
+                filename = secure_filename(file3.filename)
+                file3.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                image_path3 = f"{UPLOAD_FOLDER}/{filename}"
+                cur = mysql.connection.cursor()
+                cur.execute(
+                    "INSERT INTO objet_p_t.file_path3 = (%s)",
+                    (file_path3,))
+                mysql.connection.commit()
+                cur.close()
 
             cur = mysql.connection.cursor()
-            cur.execute("INSERT INTO objet_p_t (type, statu, file_path, emplacement, destribition, date_p_t, id_p, etat)"
-                        "VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
-                        (type, statu, file_path, place, destribition, date, id_p, etat))
+            cur.execute("INSERT INTO objet_p_t (type, statu, emplacement, destribition, date_p_t, id_p, etat)"
+                        "VALUES (%s, %s, %s, %s, %s, %s, %s)",
+                        (type, statu, place, destribition, date, id_p, etat))
             mysql.connection.commit()
             cur.close()
 
@@ -295,18 +325,40 @@ def update(id_o):
             place = request.form['place']
             destribition = request.form['destribition']
             date = request.form['date']
-            file = request.files['file']
+            file1 = request.files['file1']
+            file2 = request.files['file2']
+            file3 = request.files['file3']
             # Gérer le téléchargement de l'image si elle est fournie
-            if file and allowed_file(file.filename):
-                filename = secure_filename(file.filename)
-                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-                image_path = f"{UPLOAD_FOLDER}/{filename}"
+            if file1 and allowed_file(file1.filename):
+                filename = secure_filename(file1.filename)
+                file1.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                image_path1 = f"{UPLOAD_FOLDER}/{filename}"
                 # Mettre à jour avec une nouvelle image
                 cur.execute("""
-                        UPDATE objet_p_t
-                        SET file_path = %s
-                        WHERE id_o = %s
-                    """, (image_path, id_o)),
+                            UPDATE objet_p_t
+                            SET file_path = %s
+                            WHERE id_o = %s
+                        """, (image_path1, id_o)),
+            if file2 and allowed_file(file2.filename):
+                filename = secure_filename(file2.filename)
+                file2.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                image_path2 = f"{UPLOAD_FOLDER}/{filename}"
+                # Mettre à jour avec une nouvelle image
+                cur.execute("""
+                            UPDATE objet_p_t
+                            SET file_path1 = %s
+                            WHERE id_o = %s
+                        """, (image_path2, id_o)),
+            if file3 and allowed_file(file3.filename):
+                filename = secure_filename(file3.filename)
+                file3.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                image_path3 = f"{UPLOAD_FOLDER}/{filename}"
+                # Mettre à jour avec une nouvelle image
+                cur.execute("""
+                            UPDATE objet_p_t
+                            SET file_path2 = %s
+                            WHERE id_o = %s
+                        """, (image_path3, id_o)),
             cur.execute("""
                         UPDATE objet_p_t
                         SET type = %s,
@@ -322,7 +374,7 @@ def update(id_o):
             return redirect(url_for('Index'))
 
         cur.execute(
-            "SELECT id_o, type, destribition, emplacement, date_p_t, file_path, statu FROM objet_p_t WHERE id_o = %s",
+            "SELECT id_o, type, destribition, emplacement, date_p_t, file_path,file_path1, file_path2, statu FROM objet_p_t WHERE id_o = %s",
             (id_o,))
         objet = cur.fetchone()
         cur.close()
@@ -340,18 +392,40 @@ def updateutl(id_o):
             place = request.form['place']
             destribition = request.form['destribition']
             date = request.form['date']
-            file = request.files['file']
+            file1 = request.files['file1']
+            file2 = request.files['file2']
+            file3 = request.files['file3']
             # Gérer le téléchargement de l'image si elle est fournie
-            if file and allowed_file(file.filename):
-                filename = secure_filename(file.filename)
-                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-                image_path = f"{UPLOAD_FOLDER}/{filename}"
+            if file1 and allowed_file(file1.filename):
+                filename = secure_filename(file1.filename)
+                file1.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                image_path1 = f"{UPLOAD_FOLDER}/{filename}"
                 # Mettre à jour avec une nouvelle image
                 cur.execute("""
-                        UPDATE objet_p_t
-                        SET file_path = %s
-                        WHERE id_o = %s
-                    """, (image_path, id_o)),
+                            UPDATE objet_p_t
+                            SET file_path = %s
+                            WHERE id_o = %s
+                        """, (image_path1, id_o)),
+            if file2 and allowed_file(file2.filename):
+                filename = secure_filename(file2.filename)
+                file2.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                image_path2 = f"{UPLOAD_FOLDER}/{filename}"
+                # Mettre à jour avec une nouvelle image
+                cur.execute("""
+                            UPDATE objet_p_t
+                            SET file_path1 = %s
+                            WHERE id_o = %s
+                        """, (image_path2, id_o)),
+            if file3 and allowed_file(file3.filename):
+                filename = secure_filename(file3.filename)
+                file3.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                image_path3 = f"{UPLOAD_FOLDER}/{filename}"
+                # Mettre à jour avec une nouvelle image
+                cur.execute("""
+                            UPDATE objet_p_t
+                            SET file_path2 = %s
+                            WHERE id_o = %s
+                        """, (image_path3, id_o)),
             cur.execute("""
                         UPDATE objet_p_t
                         SET type = %s,
@@ -367,7 +441,7 @@ def updateutl(id_o):
             return redirect(url_for('Indexutile'))
 
         cur.execute(
-            "SELECT id_o, type, destribition, emplacement, date_p_t, file_path, statu FROM objet_p_t WHERE id_o = %s",
+            "SELECT id_o, type, destribition, emplacement, date_p_t, file_path, file_path1, file_path2, statu FROM objet_p_t WHERE id_o = %s",
             (id_o,))
         objet = cur.fetchone()
         cur.close()
@@ -386,18 +460,40 @@ def updateadmin(id_o):
             place = request.form['place']
             destribition = request.form['destribition']
             date = request.form['date']
-            file = request.files['file']
+            file1 = request.files['file1']
+            file2 = request.files['file2']
+            file3 = request.files['file3']
             # Gérer le téléchargement de l'image si elle est fournie
-            if file and allowed_file(file.filename):
-                filename = secure_filename(file.filename)
-                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-                image_path = f"{UPLOAD_FOLDER}/{filename}"
+            if file1 and allowed_file(file1.filename):
+                filename = secure_filename(file1.filename)
+                file1.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                image_path1 = f"{UPLOAD_FOLDER}/{filename}"
                 # Mettre à jour avec une nouvelle image
                 cur.execute("""
                         UPDATE objet_p_t
                         SET file_path = %s
                         WHERE id_o = %s
-                    """, (image_path, id_o)),
+                    """, (image_path1, id_o)),
+            if file2 and allowed_file(file2.filename):
+                filename = secure_filename(file2.filename)
+                file2.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                image_path2 = f"{UPLOAD_FOLDER}/{filename}"
+                # Mettre à jour avec une nouvelle image
+                cur.execute("""
+                        UPDATE objet_p_t
+                        SET file_path1 = %s
+                        WHERE id_o = %s
+                    """, (image_path2, id_o)),
+            if file3 and allowed_file(file3.filename):
+                filename = secure_filename(file3.filename)
+                file3.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                image_path3 = f"{UPLOAD_FOLDER}/{filename}"
+                # Mettre à jour avec une nouvelle image
+                cur.execute("""
+                        UPDATE objet_p_t
+                        SET file_path2 = %s
+                        WHERE id_o = %s
+                    """, (image_path3, id_o)),
             cur.execute("""
                         UPDATE objet_p_t
                         SET type = %s,

@@ -195,10 +195,6 @@
 
 <body>
     <div class="sidebar" id="sidebar">
-            <h2>Menu</h2>
-            <ul>
-                <li><a href="{{ url_for('Index') }}"><i class="fas fa-home"></i> Page général</a></li>
-            </ul>
 
 
         </div>
@@ -237,7 +233,9 @@
                 </div>
                 <div class="mb-3">
                     <label for="photo">Photo (si elle existe) :</label>
-                    <input type="file" id="photo" name="file" accept="image/*">
+                    <input type="file" id="photo" name="file1" accept="image/*">
+                    <input type="file" id="photo" name="file2" accept="image/*">
+                    <input type="file" id="photo" name="file3" accept="image/*">
                 </div>
                 <input type="hidden" id="user_id" name="user_id" value="{{ session['user_id'] }}">
                 <input type="hidden" id="etat" name="etat" value="inactive">

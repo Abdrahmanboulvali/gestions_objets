@@ -184,7 +184,9 @@
                         <td>Photo actuelle :</td>
                         <td>
                             {% if objetadmin[7] %}
-                            <img src="{{ url_for('static', filename=objetadmin[7].replace('static/', '')) }}" alt="Image de {{ objetadmin[1] }}" class="img-fluid" style="max-width: 100%; max-height: 200px;">
+                            <img src="{{ url_for('static', filename=objetadmin[7].replace('static/', '')) }}" alt="Image de {{ objetadmin[1] }}" class="img-fluid" style="max-width: 100%; max-height: 200px;"><br>
+                            <img src="{{ url_for('static', filename=objetadmin[9].replace('static/', '')) }}" alt="Image de {{ objetadmin[1] }}" class="img-fluid" style="max-width: 100%; max-height: 200px;"><br>
+                            <img src="{{ url_for('static', filename=objetadmin[10].replace('static/', '')) }}" alt="Image de {{ objetadmin[1] }}" class="img-fluid" style="max-width: 100%; max-height: 200px;"><br>
                             {% else %}
                             <p>Aucune image disponible</p>
                             {% endif %}
@@ -192,7 +194,9 @@
                     </tr>
                     <tr>
                         <td><label for="photo">Changer l'image :</label></td>
-                        <td><input type="file" id="photo" name="file" accept="image/*"></td>
+                        <td><input type="file" id="photo" name="file1" accept="image/*"><br>
+                        <input type="file" id="photo" name="file2" accept="image/*"><br>
+                        <input type="file" id="photo" name="file3" accept="image/*"><br></td>
                     </tr>
                     <tr>
                         <td colspan="2" style="text-align: center;">
