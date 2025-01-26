@@ -13,10 +13,11 @@ CORS(app)  # Autorise toutes les origines
 account_sid = "ACa95ab4e41f99b202e1b1f0819d9b3771"
 auth_token = "0ef7113d41987ab32821a42c1e187bb4"
 twilio_phone_number = "+15673443856"  # Corrected format
-app.secret_key ="abderrahmane"
+
 
 client = Client(account_sid, auth_token)
 
+app.secret_key ="abderrahmane"
 #this is a comment 
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
