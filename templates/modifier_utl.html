@@ -178,17 +178,23 @@
                         <td>Photo actuelle :</td>
                         <td>
                             {% if objet[5] %}
-                            <img src="{{ url_for('static', filename=objet[5].replace('static/', '')) }}" alt="Image de {{ objet[1] }}" class="img-fluid" style="max-width: 100%; max-height: 200px;"><br><img src="{{ url_for('static', filename=objet[6].replace('static/', '')) }}" alt="Image de {{ objet[1] }}" class="img-fluid" style="max-width: 100%; max-height: 200px;"><br><img src="{{ url_for('static', filename=objet[7].replace('static/', '')) }}" alt="Image de {{ objet[1] }}" class="img-fluid" style="max-width: 100%; max-height: 200px;">
-                            {% else %}
-                            <p>Aucune image disponible</p>
+                            <img src="{{ url_for('static', filename=objet[5].replace('static/', '')) }}" alt="Image de {{ objet[1] }}" class="img-fluid" style="max-width: 100%; max-height: 200px;">
+                            {% endif %}
+                            {% if objet[6] %}
+                            <img src="{{ url_for('static', filename=objet[6].replace('static/', '')) }}" alt="Image de {{ objet[1] }}" class="img-fluid" style="max-width: 100%; max-height: 200px;">
+                            {% endif %}
+                            {% if objet[7] %}
+                            <img src="{{ url_for('static', filename=objet[7].replace('static/', '')) }}" alt="Image de {{ objet[1] }}" class="img-fluid" style="max-width: 100%; max-height: 200px;">
                             {% endif %}
                         </td>
                     </tr>
                     <tr>
                         <td><label for="photo">Changer l'image :</label></td>
-                        <td><input type="file" id="photo" name="file1" accept="image/*"><br>
-                        <input type="file" id="photo" name="file2" accept="image/*"><br>
-                        <input type="file" id="photo" name="file3" accept="image/*"><br></td>
+                        <td>
+                            <input type="file" id="photo" name="file1" accept="image/*">
+                            <input type="file" id="photo" name="file2" accept="image/*">
+                            <input type="file" id="photo" name="file3" accept="image/*">
+                        </td>
                     </tr>
                     <tr>
                         <td colspan="2" style="text-align: center;">

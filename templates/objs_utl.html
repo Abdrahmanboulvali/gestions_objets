@@ -127,6 +127,36 @@
             font-size: 16px;
         }
     </style>
+    <style>
+        /* نافذة منبثقة تغطي الشاشة بالكامل */
+        .image-modal {
+            display: none; /* مخفية بشكل افتراضي */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8); /* خلفية شفافة سوداء */
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .image-modal img {
+            max-width: 90%; /* تحجيم الصورة لتناسب الشاشة */
+            max-height: 90%;
+            border-radius: 10px;
+        }
+
+        .image-modal .close {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 30px;
+            color: white;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
     <div class="container my-4" style="margin-left: auto; margin-right: auto;">
@@ -159,15 +189,14 @@
             <td>{{row.5}}</td>
             <td>{{row.3}}</td>
             <td>{{row.4}}</td>
-            <td><img src="{{ url_for('static', filename=row[7].replace('static/', '')) }}" width="100" height="100"><br>
-                {% if row[7] %}
-                <a href="{{ url_for('static', filename=row[7].replace('static/', '')) }}"><i class="fa fa-image"></i></a>
+            <td>{% if row[7] %}
+                <img src="{{ url_for('static', filename=row[7].replace('static/', '')) }}" width="50" height="50" alt="Thumbnail" onclick="showImageModal(this.src)">
                 {% endif %}
                 {% if row[9] %}
-                <a href="{{ url_for('static', filename=row[9].replace('static/', '')) }}"><i class="fa fa-image"></i></a>
+                <img src="{{ url_for('static', filename=row[9].replace('static/', '')) }}" width="50" height="50" alt="Thumbnail" onclick="showImageModal(this.src)">
                 {% endif %}
                 {% if row[10] %}
-                <a href="{{ url_for('static', filename=row[10].replace('static/', '')) }}"><i class="fa fa-image"></i></a>
+                <img src="{{ url_for('static', filename=row[10].replace('static/', '')) }}" width="50" height="50" alt="Thumbnail" onclick="showImageModal(this.src)">
                 {% endif %}
             </td>
             <td>{{row.12}} {{row.13}} [{{row.14}} ]</td>
@@ -179,7 +208,7 @@
                         <i class="fas fa-fw fa-edit"></i>
                     </a>
                     <a href="/deleteutl/{{ row.0 }}" class="btn btn-danger btn-xs"
-                        onclick="return confirm('هل أنت متأكد من أنك تريد حذف هذا العنصر')">
+                        onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet élément ?')">
                         <i class="fas fa-fw fa-trash delete-icon"></i>
                     </a>
                  {% else %}
@@ -192,6 +221,10 @@
     </tbody>
 
 </table>
+            <div id="imageModal" class="image-modal">
+    <span class="close" onclick="closeImageModal()">&times;</span>
+    <img id="modalImage" src="" alt="Full Image">
+</div>
     </div>
 
     <script>
@@ -232,6 +265,21 @@
         }
 
     </script>
+        <script>
+    // وظيفة عرض النافذة المنبثقة مع الصورة
+    function showImageModal(src) {
+        const modal = document.getElementById('imageModal');
+        const modalImage = document.getElementById('modalImage');
+        modalImage.src = src; // تعيين رابط الصورة
+        modal.style.display = 'flex'; // إظهار النافذة
+    }
+
+    // وظيفة إغلاق النافذة المنبثقة
+    function closeImageModal() {
+        const modal = document.getElementById('imageModal');
+        modal.style.display = 'none'; // إخفاء النافذة
+    }
+</script>
     </div>
 </body>
 </html>

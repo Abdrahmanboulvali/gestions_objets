@@ -43,12 +43,14 @@ def get_objets():
             'destribition': row[5],
             'emplacement': row[3],
             'date': row[4],
-            'nom': row[11],
-            'prenome': row[12],
-            'id_p': row[10],
+            'nom': row[12],
+            'prenome': row[13],
+            'id_p': row[6],
             'etat':row[8],
-            'num_tel': row[13],
-            'image': url_for('static', filename=row[7].replace('static/', ''), _external=True) if row[7] else None
+            'num_tel': row[14],
+            'image1': url_for('static', filename=row[7].replace('static/', ''), _external=True) if row[7] else None,
+            'image2': url_for('static', filename=row[9].replace('static/', ''), _external=True) if row[9] else None,
+            'image3': url_for('static', filename=row[10].replace('static/', ''), _external=True) if row[10] else None
         }
         for row in objects
     ]
@@ -176,15 +178,20 @@ def update_objet(id_o):
         if image_path:
             cur.execute("""
                     UPDATE objet_p_t
-                    SET type = %s,
-                        statu = %s,
-                        file_path = %s,
-                        emplacement = %s,
-                        destribition = %s,
-                        date_p_t = %s
+                    SET file_path = %s
                     WHERE id_o = %s
-                """, (type, statu, relative_image_path, emplacement, destribition, date, id_o)
+                """, (relative_image_path, id_o)
             )
+        cur.execute("""
+                            UPDATE objet_p_t
+                            SET type = %s,
+                                statu = %s,
+                                emplacement = %s,
+                                destribition = %s,
+                                date_p_t = %s
+                            WHERE id_o = %s
+                        """, (type, statu, emplacement, destribition, date, id_o)
+                    )
         mysql.connection.commit()
 
         return '', 200
