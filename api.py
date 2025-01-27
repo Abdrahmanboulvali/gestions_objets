@@ -23,6 +23,72 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 mysql = MySQL(app)
 
+import random
+from twilio.rest import Client  # لاستخدام Twilio لإرسال الرسائل النصية (يمكنك استخدام مكتبة أخرى)
+
+account_sid = "ACa95ab4e41f99b202e1b1f0819d9b3771"
+auth_token = "0ef7113d41987ab32821a42c1e187bb4"
+twilio_phone_number = "+15673443856"  # Corrected format
+
+# تخزين أكواد OTP في الجلسة (مؤقت فقط - يفضل استخدام قاعدة بيانات للإنتاج)
+otp_storage = {}
+
+# API: إرسال OTP
+@app.route('/api/envoyer_otp', methods=['POST'])
+def envoyer_otp():
+    global num_tel
+    try:
+        data = request.get_json()
+
+        if not data or 'tel' not in data:
+            return jsonify({'error': 'رقم الهاتف مطلوب'}), 400
+
+
+        tel = data['tel']
+
+        if not tel.startswith('+'):
+            num_tel = f"+222{tel}"
+
+
+        otp_code = str(random.randint(100000, 999999))
+        otp_storage[tel] = otp_code
+
+
+        client = Client(account_sid, auth_token)
+        message = client.messages.create(
+            body=f"كود OTP الخاص بك هو: {otp_code}",
+            from_=twilio_phone_number,
+            to=num_tel
+        )
+
+        return jsonify({'message': 'تم إرسال الكود بنجاح'}), 200
+    except Exception as e:
+        print(f"Erreur : {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/verification_otp', methods=['POST'])
+def verification_otp():
+    try:
+        data = request.get_json()
+
+        if not data or 'otp' not in data or 'tel' not in data:
+            return jsonify({'error': 'الكود ورقم الهاتف مطلوبان'}), 400
+
+        otp = data['otp']
+        tel = data['tel']
+
+
+        if tel in otp_storage and otp_storage[tel] == otp:
+            del otp_storage[tel]
+            return jsonify({'message': 'تم التحقق بنجاح'}), 200
+        else:
+            return jsonify({'error': 'كود غير صحيح أو منتهي الصلاحية'}), 400
+    except Exception as e:
+        print(f"Erreur : {e}")
+        return jsonify({'error': str(e)}), 500
+
+
 # Fonction pour vérifier si un fichier est autorisé
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
