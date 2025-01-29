@@ -30,10 +30,8 @@ account_sid = "ACa95ab4e41f99b202e1b1f0819d9b3771"
 auth_token = "0ef7113d41987ab32821a42c1e187bb4"
 twilio_phone_number = "+15673443856"  # Corrected format
 
-# تخزين أكواد OTP في الجلسة (مؤقت فقط - يفضل استخدام قاعدة بيانات للإنتاج)
 otp_storage = {}
 
-# API: إرسال OTP
 @app.route('/api/envoyer_otp', methods=['POST'])
 def envoyer_otp():
     global num_tel
@@ -41,7 +39,7 @@ def envoyer_otp():
         data = request.get_json()
 
         if not data or 'tel' not in data:
-            return jsonify({'error': 'رقم الهاتف مطلوب'}), 400
+            return jsonify({'error': 'Le numéro du téléphone a demendé'}), 400
 
 
         tel = data['tel']
@@ -93,6 +91,86 @@ def verification_otp():
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+@app.route('/api/update_etat/<int:id_o>')
+def upadmin(id_o):
+    etat = 'active'
+    cur = mysql.connection.cursor()
+    cur.execute("""
+            UPDATE objet_p_t
+            SET etat = %s
+            WHERE id_o = %s
+        """, (etat, id_o))
+    mysql.connection.commit()
+    cur.close()
+
+    return '', 200
+
+@app.route('/api/user/<int:userId>', methods=['GET'])
+def get_user(userId):
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM person_p_t WHERE id_p = %s", (userId,))
+    user = cur.fetchone()
+    cur.close()
+
+    data =[
+        {
+            'nom': user[1],
+            'prenom': user[2],
+            'num_tel': user[3],
+            'email': user[6],
+            'adress': user[7]
+        }
+    ]
+    return jsonify(data), 200
+
+@app.route('/api/update_profile/<int:userId>', methods=['PUT'])
+def update_profile(userId):
+    data = request.get_json()
+
+    if not data or 'nom' not in data or 'prenom' not in data or 'email' not in data or 'num_tel' not in data or 'adress' not in data:
+        return jsonify({'error': 'Champs obligatoires manquants'}), 400
+
+    nom = data['nom']
+    prenom = data['prenom']
+    email = data['email']
+    num_tel = data['num_tel']
+    adress = data['adress']
+    cur = mysql.connection.cursor()
+    cur.execute("""
+                UPDATE person_p_t
+                SET nom = %s, prenom = %s, mail = %s, num_tel = %s, adress = %s
+                WHERE id_p = %s
+            """, (nom, prenom, email, num_tel, adress, userId))
+    mysql.connection.commit()
+    cur.close()
+
+    return jsonify({'message': 'Profil mis à jour avec succès'}), 200
+
+
+@app.route('/api/verify_password/<int:userId>', methods=['POST'])
+def verify_password(userId):
+    data = request.get_json()
+
+    if not data or 'mot_passe' not in data:
+        return jsonify({'error': 'Vous devez entrer le mot de passe'}), 400
+
+    mot_passe = data['mot_passe']
+    print(mot_passe)
+    cur1 = mysql.connection.cursor()
+    cur1.execute("SELECT * FROM person_p_t WHERE id_p = %s", (userId,))
+    person = cur1.fetchone()
+    mysql.connection.commit()
+    cur1.close()
+    if person[4] == mot_passe:
+        print(person[4])
+        return jsonify({'message': 'Profil mis à jour avec succès'}), 200
+    else:
+        return jsonify({'message': 'Le mot de passe est incorrect'}), 201
+
+
+
+
+
 # Api : Obtenir tous les items
 @app.route('/api/objet_p_t', methods=['GET'])
 def get_objets():
@@ -112,6 +190,8 @@ def get_objets():
             'nom': row[12],
             'prenome': row[13],
             'id_p': row[6],
+            'email': row[17],
+            'adress': row[18],
             'etat':row[8],
             'num_tel': row[14],
             'image1': url_for('static', filename=row[7].replace('static/', ''), _external=True) if row[7] else None,
@@ -220,10 +300,10 @@ def update_objet(id_o):
         image_path = None
 
         # Gérer l'image encodée en Base64 si présente
-        if 'image' in data4:
+        if 'image1' in data4:
             try:
                 # Décoder l'image Base64
-                image_data = base64.b64decode(data4['image'])
+                image_data = base64.b64decode(data4['image1'])
                 unique_filename = f"{uuid.uuid4().hex}.jpg"  # Nom unique avec extension JPG
                 image_path = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename).replace("\\", "/")
 
