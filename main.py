@@ -271,7 +271,6 @@ def insert():
 @app.route('/inserte', methods=['POST'])
 def inserte():
     if 'user_id' in session:
-        global filename
         if request.method == "POST":
             type = request.form['type']
             statu = request.form['statu']
@@ -280,53 +279,43 @@ def inserte():
             date = request.form['date']
             etat = request.form['etat']
             id_p = session['user_id']
-            file1 = request.files['file1']
-            file2 = request.files['file2']
-            file3 = request.files['file3']
-            file_path1 = None
-            file_path2 = None
-            file_path3 = None
-            # Gérer le téléchargement de l'image si elle est fournie
+
+            file1 = request.files.get('file1')
+            file2 = request.files.get('file2')
+            file3 = request.files.get('file3')
+
+            image_path1 = ""
+            image_path2 = ""
+            image_path3 = ""
+
             if file1 and allowed_file(file1.filename):
                 filename = secure_filename(file1.filename)
                 file1.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-                image_path1 = f"{UPLOAD_FOLDER}/{filename}"
-                cur = mysql.connection.cursor()
-                cur.execute(
-                    "INSERT INTO objet_p_t.file_path = %s)",
-                    (file_path1,))
-                mysql.connection.commit()
-                cur.close()
-            elif file2 and allowed_file(file2.filename):
+                image_path1 = f"{app.config['UPLOAD_FOLDER']}/{filename}"
+
+            if file2 and allowed_file(file2.filename):
                 filename = secure_filename(file2.filename)
                 file2.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-                image_path2 = f"{UPLOAD_FOLDER}/{filename}"
-                cur = mysql.connection.cursor()
-                cur.execute(
-                    "INSERT INTO objet_p_t.file_path1 = %s",
-                    (file_path2,))
-                mysql.connection.commit()
-                cur.close()
-            elif file3 and allowed_file(file3.filename):
+                image_path2 = f"{app.config['UPLOAD_FOLDER']}/{filename}"
+
+            if file3 and allowed_file(file3.filename):
                 filename = secure_filename(file3.filename)
                 file3.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-                image_path3 = f"{UPLOAD_FOLDER}/{filename}"
-                cur = mysql.connection.cursor()
-                cur.execute(
-                    "INSERT INTO objet_p_t.file_path3 = (%s)",
-                    (file_path3,))
-                mysql.connection.commit()
-                cur.close()
+                image_path3 = f"{app.config['UPLOAD_FOLDER']}/{filename}"
 
             cur = mysql.connection.cursor()
-            cur.execute("INSERT INTO objet_p_t (type, statu, emplacement, destribition, date_p_t, id_p, etat)"
-                        "VALUES (%s, %s, %s, %s, %s, %s, %s)",
-                        (type, statu, place, destribition, date, id_p, etat))
+            cur.execute(
+                "INSERT INTO objet_p_t (type, statu, emplacement, destribition, date_p_t, id_p, etat, file_path, file_path1, file_path2) "
+                "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                (type, statu, place, destribition, date, id_p, etat, image_path1, image_path2, image_path3)
+            )
             mysql.connection.commit()
             cur.close()
 
             return redirect(url_for('Index'))
+
         return redirect(url_for('hom'))
+
 
 # Route : Mettre à jour un item
 @app.route('/update/<int:id_o>', methods=['GET', 'POST'])
