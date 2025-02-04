@@ -241,7 +241,6 @@ def api_create():
         for image in [image1, image2, image3]:
             if image:
                 try:
-                    # فك تشفير الصورة من Base64
                     image_data = base64.b64decode(image)
 
                     if not os.path.exists(app.config['UPLOAD_FOLDER']):
