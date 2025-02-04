@@ -24,7 +24,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 mysql = MySQL(app)
 
 import random
-from twilio.rest import Client  # لاستخدام Twilio لإرسال الرسائل النصية (يمكنك استخدام مكتبة أخرى)
+from twilio.rest import Client
 
 account_sid = "ACa95ab4e41f99b202e1b1f0819d9b3771"
 auth_token = "0ef7113d41987ab32821a42c1e187bb4"
@@ -230,48 +230,54 @@ def inserteee():
 @app.route('/api/create', methods=['POST'])
 def api_create():
     try:
-        # Vérifier si tous les champs requis sont présents
         data = request.get_json()
-        if not data or 'statu' not in data or 'destribition' not in data or 'image' not in data:
-            return jsonify({'error': 'Champs obligatoires manquants'}), 400
 
-        type = data['type']
-        statu = data['statu']
-        destribition = data['destribition']
-        emplacement = data['emplacement']
-        date = data['date']
-        etat = data['etat']
-        id_p = data['identifiant']
-        image_base64 = data['image']
+        image1 = data.get('image1')
+        image2 = data.get('image2')
+        image3 = data.get('image3')
 
-        # Décoder l'image Base64
+        relative_image_paths = []
 
-        try:
-            image_data = base64.b64decode(image_base64)
-        except Exception as e:
-            return jsonify({'error': 'Image invalide ou non décodable'}), 400
+        for image in [image1, image2, image3]:
+            if image:
+                try:
+                    # فك تشفير الصورة من Base64
+                    image_data = base64.b64decode(image)
 
-        # Vérifier si le dossier d'upload existe, sinon le créer
-        if not os.path.exists(app.config['UPLOAD_FOLDER']):
-            os.makedirs(app.config['UPLOAD_FOLDER'])
+                    if not os.path.exists(app.config['UPLOAD_FOLDER']):
+                        os.makedirs(app.config['UPLOAD_FOLDER'])
 
-        # Générer un nom de fichier unique pour l'image
-        unique_filename = f"{uuid.uuid4().hex}.jpg"  # Par défaut, l'image est enregistrée au format JPG
-        image_path = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename).replace("\\", "/")
+                    unique_filename = f"{uuid.uuid4().hex}.jpg"
+                    image_path = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename).replace("\\", "/")
 
-        # Enregistrer l'image
-        with open(image_path, 'wb') as image_file:
-            image_file.write(image_data)
+                    with open(image_path, 'wb') as image_file:
+                        image_file.write(image_data)
 
-        # Chemin relatif pour la base de données
-        relative_image_path = os.path.join('uploads', unique_filename).replace("\\", "/")
+                    relative_image_path = os.path.join('uploads', unique_filename).replace("\\", "/")
+                    relative_image_paths.append(relative_image_path)
+                except Exception as e:
+                    return jsonify({'error': 'Erreur lors du traitement des images'}), 400
+            else:
+                relative_image_paths.append(None)
 
-        # Insérer les données dans la base
         cur = mysql.connection.cursor()
         cur.execute(
-            "INSERT INTO objet_p_t (type, statu, file_path, emplacement, destribition, date_p_t, id_p, etat)"
-                    "VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
-                    (type, statu, relative_image_path, emplacement, destribition, date, id_p, etat)
+            """
+            INSERT INTO objet_p_t (type, statu, file_path, file_path1, file_path2, emplacement, destribition, date_p_t, id_p, etat)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """,
+            (
+                data.get('type'),
+                data.get('statu'),
+                relative_image_paths[0],
+                relative_image_paths[1],
+                relative_image_paths[2],
+                data.get('emplacement'),
+                data.get('destribition'),
+                data.get('date'),
+                data.get('identifiant'),
+                data.get('etat'),
+            )
         )
         mysql.connection.commit()
         return '', 201
@@ -283,7 +289,6 @@ def api_create():
 # Api : Mettre à jour un item
 @app.route('/api/update/<int:id_o>', methods=['PUT'])
 def update_objet(id_o):
-    global relative_image_path
     try:
         # Lire les données JSON envoyées par le client
         data4 = request.get_json()
@@ -292,52 +297,55 @@ def update_objet(id_o):
         if not data4 or 'statu' not in data4 or 'destribition' not in data4:
             return jsonify({'error': 'Champs obligatoires manquants'}), 400
 
-        type = data4['type']
-        statu = data4['statu']
-        destribition = data4['destribition']
-        emplacement = data4['emplacement']
-        date = data4['date']
-        image_path = None
+        # Lire les champs
+        type = data4.get('type')
+        statu = data4.get('statu')
+        destribition = data4.get('destribition')
+        emplacement = data4.get('emplacement')
+        date = data4.get('date')
 
-        # Gérer l'image encodée en Base64 si présente
-        if 'image1' in data4:
-            try:
-                # Décoder l'image Base64
-                image_data = base64.b64decode(data4['image1'])
-                unique_filename = f"{uuid.uuid4().hex}.jpg"  # Nom unique avec extension JPG
-                image_path = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename).replace("\\", "/")
+        relative_image_paths = [None, None, None]
 
-                # Enregistrer l'image
-                if not os.path.exists(app.config['UPLOAD_FOLDER']):
-                    os.makedirs(app.config['UPLOAD_FOLDER'])
+        for i in range(1, 4):
+            image_key = f'image{i}'
+            if image_key in data4 and data4[image_key]:
+                try:
+                    image_data = base64.b64decode(data4[image_key])
+                    unique_filename = f"{uuid.uuid4().hex}.jpg"
+                    image_path = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename).replace("\\", "/")
 
-                with open(image_path, 'wb') as image_file:
-                    image_file.write(image_data)
+                    if not os.path.exists(app.config['UPLOAD_FOLDER']):
+                        os.makedirs(app.config['UPLOAD_FOLDER'])
 
-                # Chemin relatif pour la base de données
-                relative_image_path = os.path.join('uploads', unique_filename).replace("\\", "/")
-            except Exception as e:
-                return jsonify({'error': 'Erreur lors du traitement de l\'image'}), 400
+                    with open(image_path, 'wb') as image_file:
+                        image_file.write(image_data)
 
-        # Mise à jour dans la base de données
+                    relative_image_paths[i - 1] = os.path.join('uploads', unique_filename).replace("\\", "/")
+                except Exception as e:
+                    return jsonify({'error': f'Erreur lors du traitement de l\'image {i}'}), 400
+
         cur = mysql.connection.cursor()
-        if image_path:
-            cur.execute("""
-                    UPDATE objet_p_t
-                    SET file_path = %s
-                    WHERE id_o = %s
-                """, (relative_image_path, id_o)
-            )
-        cur.execute("""
-                            UPDATE objet_p_t
-                            SET type = %s,
-                                statu = %s,
-                                emplacement = %s,
-                                destribition = %s,
-                                date_p_t = %s
-                            WHERE id_o = %s
-                        """, (type, statu, emplacement, destribition, date, id_o)
-                    )
+
+        update_image_query = """
+            UPDATE objet_p_t
+            SET file_path = COALESCE(%s, file_path),
+                file_path1 = COALESCE(%s, file_path1),
+                file_path2 = COALESCE(%s, file_path2)
+            WHERE id_o = %s
+        """
+        cur.execute(update_image_query, (*relative_image_paths, id_o))
+
+        update_data_query = """
+            UPDATE objet_p_t
+            SET type = %s,
+                statu = %s,
+                emplacement = %s,
+                destribition = %s,
+                date_p_t = %s
+            WHERE id_o = %s
+        """
+        cur.execute(update_data_query, (type, statu, emplacement, destribition, date, id_o))
+
         mysql.connection.commit()
 
         return '', 200

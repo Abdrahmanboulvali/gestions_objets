@@ -115,65 +115,86 @@
 
         .card button:hover {
             background: #006666;
-        }
-    </style>
+      </style>
+
 </head>
 <body>
 <div>
     <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-        <ul>
-            <li><a class="nav-link" href="{{ url_for('Index') }}"><i class="fas fa-fw fa-home"></i> Page général</a></li>
-            <li><a href="{{ url_for('profile') }}"><i class="fas fa-user"></i> Profile</a></li>
-        </ul>
-    </div>
+
 
     <!-- Header -->
     <div class="header">
         <a href="{{ url_for('profile') }}" class="menu-btn" id="menu-btn"><i class="fas fa-arrow-left"></i></a>
     </div>
 
-    <!-- Profile Form in a Card -->
     <div class="card">
         <h4>Informations du profil</h4>
-        <form method="post" enctype="multipart/form-data" class="p-4">
-            <fieldset>
-                <p class="form-group">
-                    <label for="nom">Nom :</label><br>
-                    <input id="nom" name="nom" value="{{ person[1] }}">
-                </p>
-                <p class="form-group">
-                    <label for="prenom">Prénom :</label><br>
-                    <input id="prenom" name="prenom" value="{{ person[2] }}">
-                </p>
-                <p class="form-group">
-                    <label for="num_tel">Numéro de téléphone :</label><br>
-                    <input id="num_tel" name="num_tel" value="{{ person[3] }}">
-                </p>
-                <p class="form-group">
-                    <label for="email">Email :</label><br>
-                    <input id="email" name="email" value="{{ person[6] }}">
-                </p>
-                <p class="form-group">
-                    <label for="adresse">Adresse :</label><br>
-                    <input id="adresse" name="adresse" value="{{ person[7] }}">
-                </p>
-                <p class="form-group">
-                    <label for="password">Mot de passe (pour confirmer) :</label><br>
-                    <input type="password" id="password" name="password" placeholder="Entez votre mot de passe" required>
-                </p>
-                <p class="form-group">
-                    <button type="submit">Envoyer</button>
-                </p>
-            </fieldset>
+        <form id="profileForm" method="post">
+            <div class="mb-3">
+                <label for="nom" class="form-label">Nom :</label>
+                <input id="nom" name="nom" class="form-control" value="{{ person[1] }}">
+            </div>
+            <div class="mb-3">
+                <label for="prenom" class="form-label">Prénom :</label>
+                <input id="prenom" name="prenom" class="form-control" value="{{ person[2] }}">
+            </div>
+            <div class="mb-3">
+                <label for="num_tel" class="form-label">Numéro de téléphone :</label>
+                <input id="num_tel" name="num_tel" class="form-control" value="{{ person[3] }}">
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">Email :</label>
+                <input id="email" name="email" class="form-control" value="{{ person[6] }}">
+            </div>
+            <div class="mb-3">
+                <label for="adresse" class="form-label">Adresse :</label>
+                <input id="adresse" name="adresse" class="form-control" value="{{ person[7] }}">
+            </div>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#passwordModal">Continuer</button>
         </form>
     </div>
 
+    <div class="modal fade" id="passwordModal" tabindex="-1" aria-labelledby="passwordModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="passwordModalLabel">Confirmation du mot de passe</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Mot de passe :</label>
+                        <input type="password" id="password" class="form-control" placeholder="Entrez votre mot de passe" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                    <button type="button" class="btn btn-primary" id="submitPassword">Envoyer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Toggle Sidebar
         document.getElementById("menu-btn").addEventListener("click", function () {
             const sidebar = document.getElementById("sidebar");
             sidebar.classList.toggle("active");
+        });
+
+        document.getElementById("submitPassword").addEventListener("click", function () {
+            let passwordValue = document.getElementById("password").value;
+            if (!passwordValue) {
+                alert("Veuillez entrer votre mot de passe !");
+                return;
+            }
+            let passwordInputHidden = document.createElement("input");
+            passwordInputHidden.type = "hidden";
+            passwordInputHidden.name = "password";
+            passwordInputHidden.value = passwordValue;
+            document.getElementById("profileForm").appendChild(passwordInputHidden);
+            document.getElementById("profileForm").submit();
         });
     </script>
 </div>

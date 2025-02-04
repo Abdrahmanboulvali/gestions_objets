@@ -137,16 +137,29 @@ def logout():
 @app.route('/upadmin/<int:id_o>')
 def upadmin(id_o):
     if 'admin' in session:
-        etat = 'active'
+        etat1 = 'active'
+        etat2 = 'inactive'
         cur = mysql.connection.cursor()
-        cur.execute("""
-                UPDATE objet_p_t
-                SET etat = %s
-                WHERE id_o = %s
-            """, (etat, id_o))
-        mysql.connection.commit()
-        cur.close()
-        return redirect(url_for('Indexadmin'))
+        cur.execute("SELECT * FROM objet_p_t where id_o = %s", (id_o,))
+        etat = cur.fetchone()
+        if etat[8] == etat2:
+            cur.execute("""
+                    UPDATE objet_p_t
+                    SET etat = %s
+                    WHERE id_o = %s
+                """, (etat1, id_o))
+            mysql.connection.commit()
+            cur.close()
+            return redirect(url_for('Indexadmin'))
+        else:
+            cur.execute("""
+                                UPDATE objet_p_t
+                                SET etat = %s
+                                WHERE id_o = %s
+                            """, (etat2, id_o))
+            mysql.connection.commit()
+            cur.close()
+            return redirect(url_for('Indexadmin'))
     return redirect(url_for('hom'))
 
 @app.route('/h', methods = ['POST', 'GET'])
@@ -549,10 +562,13 @@ def deleteutl(id_o):
         return redirect(url_for('Indexutile'))
     return redirect(url_for('hom'))
 
+
 @app.route('/updateprofil/<int:id_p>', methods=['GET', 'POST'])
 def updateprofil(id_p):
     if 'user_id' in session:
         cur = mysql.connection.cursor()
+        message = None
+
         if request.method == 'POST':
             nom = request.form['nom']
             prenom = request.form['prenom']
@@ -560,9 +576,11 @@ def updateprofil(id_p):
             email = request.form['email']
             adresse = request.form['adresse']
             password = request.form['password']
+
             cur.execute("SELECT * FROM person_p_t WHERE id_p = %s", [id_p])
             person = cur.fetchone()
-            if password and password == person[4]:
+
+            if person and password and password == person[4]:
                 cur.execute("""
                         UPDATE person_p_t
                         SET nom = %s,
@@ -573,18 +591,53 @@ def updateprofil(id_p):
                         WHERE id_p = %s
                     """, (nom, prenom, num_tel, email, adresse, id_p))
 
-
                 mysql.connection.commit()
                 cur.close()
                 return redirect(url_for('profile'))
+            else:
+                message = "Mot de passe incorrect !"
 
-        cur.execute(
-            "SELECT * FROM person_p_t WHERE id_p = %s",
-            (id_p,))
+        cur.execute("SELECT * FROM person_p_t WHERE id_p = %s", (id_p,))
         person = cur.fetchone()
         cur.close()
 
-        return render_template('modifier_profil.html', person=person)
+        return render_template('modifier_profil.html', person=person, message=message)
+    return redirect(url_for('hom'))
+
+
+@app.route('/change-password/<int:id_p>', methods=['GET', 'POST'])
+def change_password(id_p):
+    if 'user_id' in session:
+        if request.method == 'POST':
+            current_password = request.form['currentPassword']
+            new_password = request.form['newPassword']
+            confirm_new_password = request.form['confirmNewPassword']
+
+            cur = mysql.connection.cursor()
+            cur.execute("SELECT * FROM person_p_t WHERE id_p = %s", ([id_p]))
+            person = cur.fetchone()
+
+            if person and person[4] == current_password:
+                if new_password == confirm_new_password:
+                    cur.execute("UPDATE person_p_t SET mot_passe = %s WHERE id_p = %s", (new_password, id_p))
+                    mysql.connection.commit()
+                    cur.close()
+                    return redirect(url_for('hom'))
+                else:
+                    message = "كلمة المرور الجديدة لا تطابق التأكيد!"
+            else:
+                message = "كلمة المرور الحالية غير صحيحة!"
+            cur.close()
+        else:
+            message = None
+
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT * FROM person_p_t WHERE id_p = %s", (id_p,))
+        person = cur.fetchone()
+        cur.close()
+
+        return render_template('change_password.html', person=person, message=message)
+
     return redirect(url_for('hom'))
 
 
